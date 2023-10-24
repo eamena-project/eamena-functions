@@ -1,4 +1,4 @@
-import psycopg2 as pg
+import argparse
 import pandas as pd
 import numpy as np
 import re
@@ -9,5 +9,8 @@ from IPython.display import display
 import matplotlib.pyplot as plt
 import plotly.express as px
 
-def erms(GEOJSON_URL):
+argp = argparse.ArgumentParser()
+argp.add_argument('GEOJSON_URL', type=str, help='The GeoJSON URL coming from a Search in the EAMENA database', default='')
+
+def erms():
 	print(GEOJSON_URL)
