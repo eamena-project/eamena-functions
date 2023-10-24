@@ -12,5 +12,4 @@ import plotly.express as px
 argp = argparse.ArgumentParser()
 argp.add_argument('GEOJSON_URL', type=str, help='The GeoJSON URL coming from a Search in the EAMENA database', default='')
 
-def erms():
-	print(GEOJSON_URL)
+print(GEOJSON_URL)
