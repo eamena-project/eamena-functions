@@ -12,10 +12,10 @@ import math
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
-argp = argparse.ArgumentParser()
-argp.add_argument('GEOJSON_URL', type=str, help='The GeoJSON URL coming from a Search in the EAMENA database', default='')
-argp.add_argument('VERBOSE', type=bool, help='Verbose, True or False', default=False)
-args = argp.parse_args()
+# argp = argparse.ArgumentParser()
+# argp.add_argument('GEOJSON_URL', type=str, help='The GeoJSON URL coming from a Search in the EAMENA database', default='')
+# argp.add_argument('VERBOSE', type=bool, help='Verbose, True or False', default=False)
+# args = argp.parse_args()
 
 # print(args.GEOJSON_URL)
 
