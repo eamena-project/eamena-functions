@@ -26,9 +26,32 @@ def db_query(GEOJSON_URL = None):
 	Use the Arches REST API with a GeoJSON URL (in Arches: Export > GeoJSON URL) to collect selected Heritage Places in a GeoJSON format
 
 	:param GEOJSON_URL: The GeoJSON URL
+
+	:Example: 
+	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
+	>> hps = erms.db_query()
 	"""
 	resp = requests.get(GEOJSON_URL)
 	return(resp.json())
+
+def hps_list(hps = None):
+	"""
+	Store the EAMENA ID in a list 
+
+	:param hps: a dict() coming from reading of a JSON (GeoJSON). See the function `db_query()`
+
+	:return: A list of EAMENA IDs
+
+	:Example: 
+	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
+	>> hps = erms.db_query()
+	>> selected_hp = erms.hps_list(hps)
+
+	"""
+	selected_hp = []
+	for i in range(len(hps['features'])):
+		selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
+	return(selected_hp)
 
 def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/erms-template-readonly.tsv"):
 	"""
