@@ -44,7 +44,7 @@ def hps_list(hps = None):
 
 	:Example: 
 	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
-	>> hps = erms.db_query()
+	>> hps = erms.db_query(GEOJSON_URL)
 	>> selected_hp = erms.hps_list(hps)
 
 	"""
@@ -97,9 +97,8 @@ def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-pr
 	# print(df_erms.to_markdown(index=False))
 	return(df_erms)
 
-def hps_dict(df_listed = None, mylevel = "level3"):
+def hps_dict(selected_hp = None, df_listed = None, mylevel = "level3", verbose = False):
 	# Keys are EAMENA IDs and values are HP fields filled or not
-	verbose = True
 	level_values = df_listed[mylevel].unique()
 	l_erms = []
 	dict_hps = {} 
@@ -122,6 +121,7 @@ def hps_dict(df_listed = None, mylevel = "level3"):
 			except:
 				if verbose:
 					print(" /!\ '" + a_field + "' listed in the ERMS dataframe is a level1 or level2 value, but is not a field listed in the database")
+				a_value = None
 			if a_value is not None:
 				# row_num = df_res[df_res['field'] == df_field].index.tolist()
 				df_res.at[j, 'recorded'] = df_res.loc[j]['recorded'] + 1
@@ -129,21 +129,28 @@ def hps_dict(df_listed = None, mylevel = "level3"):
 		dict_hps[a_hp] = df_res
 	return(dict_hps)
 
-def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol = 3):
-	# grid dimensions
+def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol = 3, verbose = False):
+	ncol = 3
 	nrow = math.ceil(len(dict_hps.keys()) / ncol)
 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}]*ncol]*nrow, subplot_titles=tuple(dict_hps.keys()))
+	# fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}]*nrow]*ncol)
+	# fig = make_subplots(rows=nrow, cols=ncol, start_cell="top-left")
+	# colors = {'recorded': 'blue', 'Enhanced record minimum standard': 'red'}
 	current_column, current_row = 1, 1
 	# dict_hps.keys()
 	for a_hp in dict_hps.keys():
 		df = dict_hps[a_hp]
-		print(a_hp)
+		if verbose:
+			print(a_hp)
+			print(str(current_row) + " " + str(current_column))
 		if mylevel == 'level3':
-			# overlap two plots
 			fig.add_trace(go.Scatterpolar(
 				name =  "  erms",
 				r = df_erms['value'],
 				theta = df_erms['field'],
+				# mode = 'markers',
+				# marker=dict(color = melted_df_color),
+				# marker_color = "red",
 				fill='toself',
 				fillcolor='red',
 				line_color='red',
@@ -157,6 +164,7 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 				r = df['recorded'],
 				theta = df['field'],
 				mode = 'markers',
+				# marker=dict(color = melted_df_color),
 				marker_color = "blue",
 				hovertemplate="<br>".join([
 				"value: %{r}",
@@ -164,7 +172,6 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 				), 
 				current_row, current_column)
 		else:
-			# only the plot of the HP
 			fig.add_trace(go.Scatterpolar(
 				name = a_hp,
 				r = df['recorded'],
@@ -175,11 +182,16 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 				"value: %{r}",
 				"field: %{theta}"]),
 				showlegend=False), 
-				current_row, current_column)	
+				current_row, current_column)
 		current_column = current_column + 1
 		# end of line..
-		if current_column == ncol:
+		if current_column > ncol:
 			current_row = current_row + 1
 			current_column = 1
+	fig.update_layout(
+		autosize=False,
+		width=ncol*700,
+		height=nrow*300,
+	)
 	fig.show()
 
