@@ -20,21 +20,47 @@ from plotly.subplots import make_subplots
 # print(args.GEOJSON_URL)
 
 def db_query(GEOJSON_URL = None):
-	# return a JSON file (GeoJSON)
+	"""
+	Return a JSON file (GeoJSON) from a GeoJSON URL
+
+	Use the Arches REST API with a GeoJSON URL (in Arches: Export > GeoJSON URL) to collect selected Heritage Places in a GeoJSON format
+
+	:param GEOJSON_URL: The GeoJSON URL
+	"""
 	resp = requests.get(GEOJSON_URL)
 	return(resp.json())
 
 def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/erms-template-readonly.tsv"):
+	"""
+	Dataframe of ERMS individual fields
+
+	Dataframe of ERMS individual fields
+
+	:param tsv_file: the path to the read-only TSV file of ERMS
+	:param radio_button: a value coming from a Jupyter NB radio button
+
+	:return: Dataframe of ERMS individual fields
+	"""
 	df = pd.read_csv(tsv_file, delimiter = '\t')
-	df = df[["level1", "level2", "level3", "uuid_sql", "Enhanced record minimum standard"]]
-	df_listed = df.dropna()
+	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard"]]
+	# df_listed = df.dropna()
 	# if verbose:
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def erms_template_levels(radio_button = None, df_erms = None):
-	# it use a value coming from a Jupyter NB radio button
+def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/erms-template-readonly.tsv", radio_button = None):
+	"""
+	Dataframe of ERMS individual or aggregated fields
+
+	Taking a level of aggregation (level1, level2, etc.), group and sum ERMS fields (level3) into broader categories
+
+	:param tsv_file: the path to the read-only TSV file of ERMS
+	:param radio_button: a value coming from a Jupyter NB radio button
+
+	:return: Dataframe of ERMS individual or aggregated fields
+	"""
 	mylevel = radio_button.value
+	df_listed = erms_template(tsv_file)
 	df_erms = df_listed.copy()
 	df_erms['Enhanced record minimum standard'] = df_erms['Enhanced record minimum standard'].str.contains(r'Yes', case = False, na = False, regex = True).astype(int)
 	df_erms = df_erms[[mylevel, "Enhanced record minimum standard"]]
@@ -134,10 +160,3 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 			current_column = 1
 	fig.show()
 
-# hps = db_query(GEOJSON_URL) 
-# df_listed = erms_template()
-# # get the level and group data
-# df_erms = erms_template_levels(radio_button, df_erms)
-# # create dictionnary of HP
-# dict_hps = hps_dict(df_listed, mylevel)
-# plot_spidergraphs(dict_hps, df_erms, mylevel)
