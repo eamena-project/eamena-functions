@@ -32,7 +32,7 @@ def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/e
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def erms_template_levels(radio_button = None, df_erms = None)
+def erms_template_levels(radio_button = None, df_erms = None):
 	# it use a value coming from a Jupyter NB radio button
 	mylevel = radio_button.value
 	df_erms = df_listed.copy()
@@ -134,10 +134,10 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 			current_column = 1
 	fig.show()
 
-hps = db_query(GEOJSON_URL) 
-df_listed = erms_template()
-# get the level and group data
-df_erms = erms_template_levels(radio_button, df_erms)
-# create dictionnary of HP
-dict_hps = hps_dict(df_listed, mylevel)
-plot_spidergraphs(dict_hps, df_erms, mylevel)
+# hps = db_query(GEOJSON_URL) 
+# df_listed = erms_template()
+# # get the level and group data
+# df_erms = erms_template_levels(radio_button, df_erms)
+# # create dictionnary of HP
+# dict_hps = hps_dict(df_listed, mylevel)
+# plot_spidergraphs(dict_hps, df_erms, mylevel)
