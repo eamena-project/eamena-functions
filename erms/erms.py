@@ -264,7 +264,7 @@ def filter_hp_by_gs(hps, selected_hp):
 			# Clear previous output
 			output.clear_output()
 			# Call a function. Filter the DataFrame based on the selected value
-			filtered_df = filter_dataframe(selected_hp, selected_value)
+			filtered_df = filter_dataframe(hps, selected_hp, selected_value)
 			print(filtered_df, end="")
 			# return(filtered_df)
 		# Link the RadioButtons widget to the change event
