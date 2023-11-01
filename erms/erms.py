@@ -253,7 +253,7 @@ def filter_hp_by_gs(selected_hp):
 	# Create an output widget to display the filtered DataFrame
 	output = widgets.Output()
 
-  def on_radio_button_change(change):
+def on_radio_button_change(change):
 	global filtered_df
 	selected_value = change.new
 	# print(selected_value)
