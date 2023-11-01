@@ -219,11 +219,11 @@ def filter_dataframe(selected_value):
 	hps_gs = dict()
 	hps_gs['features'] = []
 	for i in range(len(selected_hp)):
-		gs_current = hps['features'][i]['properties']['Grid ID']
+		gs_current = selected_hp['features'][i]['properties']['Grid ID']
 		if gs_current == selected_value:
 		# if gs_current ==  radio_button_1.value:
 			hps_to_keep.append(i)
-		feat = [hps['features'][i] for i in hps_to_keep]
+		feat = [selected_hp['features'][i] for i in hps_to_keep]
 	for i in range(len(feat)):
 		hps_gs['features'].append(feat[i])
 	selected_hp_gs = []
