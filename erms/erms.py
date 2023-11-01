@@ -241,30 +241,29 @@ def filter_hp_by_gs(selected_hp):
 
 	:return: Update a copy of the HP list filtered on a given GS
 	"""
-  l_GridIDs = []
-  for i in range(len(selected_hp)):
-    l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
-  l_GridIDs = list(set(l_GridIDs))
-  l_GridIDs.sort()
-  radio_button_1 = widgets.RadioButtons(
-    options = l_GridIDs,
-    description = 'Select a Grid Square:'
-  )
-  # Create an output widget to display the filtered DataFrame
-  output = widgets.Output()
+	l_GridIDs = []
+	for i in range(len(selected_hp)):
+	l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+	l_GridIDs = list(set(l_GridIDs))
+	l_GridIDs.sort()
+	radio_button_1 = widgets.RadioButtons(
+	options = l_GridIDs,
+	description = 'Select a Grid Square:'
+	)
+	# Create an output widget to display the filtered DataFrame
+	output = widgets.Output()
 
   def on_radio_button_change(change):
-      global filtered_df
-      selected_value = change.new
-      # print(selected_value)
-      with output:
-          # Clear previous output
-          output.clear_output()
-          # Call a function. Filter the DataFrame based on the selected value
-          filtered_df = filter_dataframe(selected_value)
-          print(filtered_df, end="")
-          # return(filtered_df)
-
+	global filtered_df
+	selected_value = change.new
+	# print(selected_value)
+	with output:
+		# Clear previous output
+		output.clear_output()
+		# Call a function. Filter the DataFrame based on the selected value
+		filtered_df = filter_dataframe(selected_value)
+		print(filtered_df, end="")
+		# return(filtered_df)
 	# Link the RadioButtons widget to the change event
 	radio_button_1.observe(on_radio_button_change, names='value')
 	display(radio_button_1, output)
