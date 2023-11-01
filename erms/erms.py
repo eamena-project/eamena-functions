@@ -97,7 +97,7 @@ def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-pr
 	# print(df_erms.to_markdown(index=False))
 	return(df_erms)
 
-def hps_dict(selected_hp = None, df_listed = None, mylevel = "level3", verbose = False):
+def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3", verbose = False):
 	# Keys are EAMENA IDs and values are HP fields filled or not
 	level_values = df_listed[mylevel].unique()
 	l_erms = []
@@ -128,6 +128,97 @@ def hps_dict(selected_hp = None, df_listed = None, mylevel = "level3", verbose =
 		l_erms.append(df_res)
 		dict_hps[a_hp] = df_res
 	return(dict_hps)
+
+
+def filter_dataframe(hps, selected_hp, selected_value):
+	"""
+	Filter a dataframe giving a selected alue coming from a radio button
+
+	:param hps: HPs in a dict shape (GeoJSON)
+	:param selected_hp: a list of HPs IDs
+	:param selected_value: value returned by the on_radio_button_change() function, it is a GS ID
+
+	:return: Dataframe of existing HP is a given GS
+	"""
+	# nonlocal selected_hp_gs
+	# global selected_hp_gs
+	hps_to_keep = list()
+	hps_gs = dict()
+	hps_gs['features'] = []
+	for i in range(len(selected_hp)):
+		gs_current = hps['features'][i]['properties']['Grid ID']
+		if gs_current == selected_value:
+		# if gs_current ==  radio_button_1.value:
+			hps_to_keep.append(i)
+		feat = [hps['features'][i] for i in hps_to_keep]
+	for i in range(len(feat)):
+		hps_gs['features'].append(feat[i])
+	selected_hp_gs = []
+	for i in range(len(hps_gs['features'])):
+		selected_hp_gs.append(hps_gs['features'][i]['properties']['EAMENA ID'])
+	return(selected_hp_gs)
+
+def filter_hp_by_gs(hps, selected_hp):
+	"""
+	Filter a dataframe giving a selected value coming from a radio button
+
+	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
+
+	:param hps: HPs in a dict shape (GeoJSON)
+	:param selected_hp: a list of HPs IDs
+
+	:return: Update a copy of the HP list filtered on a given GS
+	"""
+	# global filtered_hp_gs
+	l_GridIDs = []
+	for i in range(len(selected_hp)):
+		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+	l_GridIDs = list(set(l_GridIDs))
+	l_GridIDs.sort()
+	radio_button_1 = widgets.RadioButtons(
+		options = l_GridIDs,
+		description = 'Select a Grid Square:'
+	)
+	output = widgets.Output()
+
+	def on_radio_button_change(change):
+		selected_value = change.new
+		global filtered_hp_gs  # Use global to access the global filtered_hp_gs
+		with output:
+			output.clear_output()
+			filtered_hp_gs = filter_dataframe(hps, selected_hp, selected_value)
+			# display(filtered_hp_gs)
+			print(filtered_hp_gs, end="")
+	
+	radio_button_1.observe(on_radio_button_change, names='value')
+	display(radio_button_1, output)
+
+def hps_subset_by_gs(hps, filtered_hp_gs):
+	"""
+	Select the HP from the original GeoJSON/dict file after that the user has selected some GS 
+
+	:param hps: HPs in a dict shape (GeoJSON). This is the original file
+	:param filtered_hp_gs: a list of HPs IDs filtered on GS
+
+	:return: GeoJSON/dict with only HP belonging to selected GS
+	"""
+	selected_hp_gs = {}
+	l_new = []
+	for i in range(len(hps['features'])):
+	# selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
+	for key, value in hps['features'][i]['properties'].items():
+		# print(key)
+		# print(value)
+		if key == 'EAMENA ID' and value in filtered_hp_gs:
+		filtered_foo['geometry'] = hps['features'][i]['geometry']
+		filtered_foo['properties'] = hps['features'][i]['properties']
+		l_new.append(filtered_foo)
+		filtered_foo = {}
+	# recreate the structure of the original dataset
+	selected_hp_gs['features'] = l_new
+	# l_new[0]
+	# len(selected_hp_gs['features'])
+	return(selected_hp_gs)
 
 def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol = 3, verbose = False):
 	ncol = 3
@@ -207,71 +298,8 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 	)
 	fig.show()
 
-def filter_dataframe(hps, selected_hp, selected_value):
-	"""
-	Filter a dataframe giving a selected alue coming from a radio button
-
-	:param hps: HPs in a dict shape (GeoJSON)
-	:param selected_hp: a list of HPs IDs
-	:param selected_value: value returned by the on_radio_button_change() function, it is a GS ID
-
-	:return: Dataframe of existing HP is a given GS
-	"""
-	hps_to_keep = list()
-	hps_gs = dict()
-	hps_gs['features'] = []
-	for i in range(len(selected_hp)):
-		gs_current = hps['features'][i]['properties']['Grid ID']
-		if gs_current == selected_value:
-		# if gs_current ==  radio_button_1.value:
-			hps_to_keep.append(i)
-		feat = [hps['features'][i] for i in hps_to_keep]
-	for i in range(len(feat)):
-		hps_gs['features'].append(feat[i])
-	selected_hp_gs = []
-	for i in range(len(hps_gs['features'])):
-		selected_hp_gs.append(hps_gs['features'][i]['properties']['EAMENA ID'])
-	return(selected_hp_gs)
-
-def filter_hp_by_gs(hps, selected_hp):
-	"""
-	Filter a dataframe giving a selected value coming from a radio button
-
-	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
-
-	:param hps: HPs in a dict shape (GeoJSON)
-	:param selected_hp: a list of HPs IDs
-
-	:return: Update a copy of the HP list filtered on a given GS
-	"""
-	l_GridIDs = []
-	for i in range(len(selected_hp)):
-		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
-	l_GridIDs = list(set(l_GridIDs))
-	l_GridIDs.sort()
-	radio_button_1 = widgets.RadioButtons(
-		options = l_GridIDs,
-		description = 'Select a Grid Square:'
-	)
-	# Create an output widget to display the filtered DataFrame
-	output = widgets.Output()
-
-	def on_radio_button_change(change):
-		global filtered_df
-		selected_value = change.new
-		# print(selected_value)
-		with output:
-			# Clear previous output
-			output.clear_output()
-			# Call a function. Filter the DataFrame based on the selected value
-			filtered_df = filter_dataframe(hps, selected_hp, selected_value)
-			print(filtered_df, end="")
-			# return(filtered_df)
-	
-	# Link the RadioButtons widget to the change event
-	radio_button_1.observe(on_radio_button_change, names='value')
-	display(radio_button_1, output)
-	return(filtered_df)
-
 # Not Run
 # filtered_data = filter_hp_by_gs(selected_hp)
+
+# foo = {'f': {'a': 10, 'b': 'red'}, 'u': {'a': 20, 'b': 'blue'}, 'c': {'a': 30, 'b': 'green'}, 'k': {'a': 40, 'b': 'yellow'}}
+# l = ['red', 'yellow']
