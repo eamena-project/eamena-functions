@@ -175,27 +175,27 @@ def filter_hp_by_gs(hps, selected_hp):
 	"""
 	# global filtered_hp_gs
 	l_GridIDs = []
-    for i in range(len(selected_hp)):
-        l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
-    l_GridIDs = list(set(l_GridIDs))
-    l_GridIDs.sort()
-    radio_button_1 = widgets.RadioButtons(
-        options=l_GridIDs,
-        description='Select a Grid Square:'
-    )
-    output = widgets.Output()
+	for i in range(len(selected_hp)):
+		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+	l_GridIDs = list(set(l_GridIDs))
+	l_GridIDs.sort()
+	radio_button_1 = widgets.RadioButtons(
+		options=l_GridIDs,
+		description='Select a Grid Square:'
+	)
+	output = widgets.Output()
 
-    def on_radio_button_change(change):
-        selected_value = change.new
-        global filtered_hp_gs
-        with output:
-            output.clear_output()
-            filtered_hp_gs = filter_dataframe(hps, selected_hp, selected_value)
-            # Print or display the result
-            print(filtered_hp_gs, end="")
+	def on_radio_button_change(change):
+		selected_value = change.new
+		global filtered_hp_gs
+		with output:
+			output.clear_output()
+			filtered_hp_gs = filter_dataframe(hps, selected_hp, selected_value)
+			# Print or display the result
+			print(filtered_hp_gs, end="")
 
-    radio_button_1.observe(on_radio_button_change, names='value')
-    display(radio_button_1, output)
+	radio_button_1.observe(on_radio_button_change, names='value')
+	display(radio_button_1, output)
 
 def hps_subset_by_gs(hps, filtered_hp_gs):
 	"""
