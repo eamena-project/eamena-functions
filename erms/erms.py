@@ -207,7 +207,7 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 	)
 	fig.show()
 
-def filter_dataframe(selected_value):
+def filter_dataframe(selected_hp, selected_value):
 	"""
 	Filter a dataframe giving a selected alue coming from a radio button
 
@@ -253,18 +253,18 @@ def filter_hp_by_gs(selected_hp):
 	# Create an output widget to display the filtered DataFrame
 	output = widgets.Output()
 
-def on_radio_button_change(change):
-	global filtered_df
-	selected_value = change.new
-	# print(selected_value)
-	with output:
-		# Clear previous output
-		output.clear_output()
-		# Call a function. Filter the DataFrame based on the selected value
-		filtered_df = filter_dataframe(selected_value)
-		print(filtered_df, end="")
-		# return(filtered_df)
-	# Link the RadioButtons widget to the change event
+	def on_radio_button_change(change):
+		global filtered_df
+		selected_value = change.new
+		# print(selected_value)
+		with output:
+			# Clear previous output
+			output.clear_output()
+			# Call a function. Filter the DataFrame based on the selected value
+			filtered_df = filter_dataframe(selected_hp, selected_value)
+			print(filtered_df, end="")
+			# return(filtered_df)
+		# Link the RadioButtons widget to the change event
 	radio_button_1.observe(on_radio_button_change, names='value')
 	display(radio_button_1, output)
 
