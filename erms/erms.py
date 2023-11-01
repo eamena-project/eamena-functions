@@ -211,7 +211,6 @@ def filter_dataframe(selected_value):
 	"""
 	Filter a dataframe giving a selected alue coming from a radio button
 
-
 	:param selected_value: value returned by the on_radio_button_change() function, it is a GS ID
 
 	:return: Dataframe of existing HP is a given GS
@@ -233,6 +232,15 @@ def filter_dataframe(selected_value):
 	return(selected_hp_gs)
 
 def filter_hp_by_gs(selected_hp):
+	"""
+	Filter a dataframe giving a selected alue coming from a radio button
+
+	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
+
+	:param selected_hp: a list of HP in a dict shape (GeoJSON)
+
+	:return: Update a copy of the HP list filtered on a given GS
+	"""
   l_GridIDs = []
   for i in range(len(selected_hp)):
     l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
@@ -256,7 +264,10 @@ def filter_hp_by_gs(selected_hp):
           filtered_df = filter_dataframe(selected_value)
           print(filtered_df, end="")
           # return(filtered_df)
+
 	# Link the RadioButtons widget to the change event
 	radio_button_1.observe(on_radio_button_change, names='value')
 	display(radio_button_1, output)
-filtered_data = filter_hp_by_gs(selected_hp)
+
+# Not Run
+# filtered_data = filter_hp_by_gs(selected_hp)
