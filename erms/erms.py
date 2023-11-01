@@ -231,19 +231,20 @@ def filter_dataframe(selected_hp, selected_value):
 		selected_hp_gs.append(hps_gs['features'][i]['properties']['EAMENA ID'])
 	return(selected_hp_gs)
 
-def filter_hp_by_gs(selected_hp):
+def filter_hp_by_gs(hps, selected_hp):
 	"""
 	Filter a dataframe giving a selected value coming from a radio button
 
 	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
 
-	:param selected_hp: a list of HP in a dict shape (GeoJSON)
+	:param hps: HPs in a dict shape (GeoJSON)
+	:param selected_hp: a list of HPs IDs
 
 	:return: Update a copy of the HP list filtered on a given GS
 	"""
 	l_GridIDs = []
 	for i in range(len(selected_hp)):
-		l_GridIDs.append(selected_hp['features'][i]['properties']['Grid ID'])
+		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
 	l_GridIDs = list(set(l_GridIDs))
 	l_GridIDs.sort()
 	radio_button_1 = widgets.RadioButtons(
