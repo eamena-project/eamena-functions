@@ -233,7 +233,7 @@ def filter_dataframe(selected_value):
 
 def filter_hp_by_gs(selected_hp):
 	"""
-	Filter a dataframe giving a selected alue coming from a radio button
+	Filter a dataframe giving a selected value coming from a radio button
 
 	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
 
@@ -243,7 +243,7 @@ def filter_hp_by_gs(selected_hp):
 	"""
 	l_GridIDs = []
 	for i in range(len(selected_hp)):
-		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+		l_GridIDs.append(selected_hp['features'][i]['properties']['Grid ID'])
 	l_GridIDs = list(set(l_GridIDs))
 	l_GridIDs.sort()
 	radio_button_1 = widgets.RadioButtons(
