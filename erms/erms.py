@@ -243,12 +243,12 @@ def filter_hp_by_gs(selected_hp):
 	"""
 	l_GridIDs = []
 	for i in range(len(selected_hp)):
-	l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+		l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
 	l_GridIDs = list(set(l_GridIDs))
 	l_GridIDs.sort()
 	radio_button_1 = widgets.RadioButtons(
-	options = l_GridIDs,
-	description = 'Select a Grid Square:'
+		options = l_GridIDs,
+		description = 'Select a Grid Square:'
 	)
 	# Create an output widget to display the filtered DataFrame
 	output = widgets.Output()
