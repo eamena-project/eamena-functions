@@ -207,10 +207,12 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 	)
 	fig.show()
 
-def filter_dataframe(selected_hp, selected_value):
+def filter_dataframe(hps, selected_hp, selected_value):
 	"""
 	Filter a dataframe giving a selected alue coming from a radio button
 
+	:param hps: HPs in a dict shape (GeoJSON)
+	:param selected_hp: a list of HPs IDs
 	:param selected_value: value returned by the on_radio_button_change() function, it is a GS ID
 
 	:return: Dataframe of existing HP is a given GS
@@ -219,11 +221,11 @@ def filter_dataframe(selected_hp, selected_value):
 	hps_gs = dict()
 	hps_gs['features'] = []
 	for i in range(len(selected_hp)):
-		gs_current = selected_hp['features'][i]['properties']['Grid ID']
+		gs_current = hps['features'][i]['properties']['Grid ID']
 		if gs_current == selected_value:
 		# if gs_current ==  radio_button_1.value:
 			hps_to_keep.append(i)
-		feat = [selected_hp['features'][i] for i in hps_to_keep]
+		feat = [hps['features'][i] for i in hps_to_keep]
 	for i in range(len(feat)):
 		hps_gs['features'].append(feat[i])
 	selected_hp_gs = []
