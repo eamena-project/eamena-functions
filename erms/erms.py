@@ -133,65 +133,130 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 	ncol = 3
 	nrow = math.ceil(len(dict_hps.keys()) / ncol)
 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}]*ncol]*nrow, subplot_titles=tuple(dict_hps.keys()))
-	# fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}]*nrow]*ncol)
-	# fig = make_subplots(rows=nrow, cols=ncol, start_cell="top-left")
-	# colors = {'recorded': 'blue', 'Enhanced record minimum standard': 'red'}
+	df_erms_1 = df_erms.copy() # to add +1 later
+	df_erms_1.loc[df_erms_1['value'] == 0, 'value'] = -1
 	current_column, current_row = 1, 1
-	# dict_hps.keys()
 	for a_hp in dict_hps.keys():
-		df = dict_hps[a_hp]
-		if verbose:
-			print(a_hp)
-			print(str(current_row) + " " + str(current_column))
-		if mylevel == 'level3':
-			fig.add_trace(go.Scatterpolar(
-				name =  "  erms",
-				r = df_erms['value'],
-				theta = df_erms['field'],
-				# mode = 'markers',
-				# marker=dict(color = melted_df_color),
-				# marker_color = "red",
-				fill='toself',
-				fillcolor='red',
-				line_color='red',
-				hovertemplate="<br>".join([
-				"value: %{r}",
-				"field: %{theta}"]),
-				showlegend=False), 
-				current_row, current_column)		
-			fig.add_trace(go.Scatterpolar(
-				name = a_hp,
-				r = df['recorded'],
-				theta = df['field'],
-				mode = 'markers',
-				# marker=dict(color = melted_df_color),
-				marker_color = "blue",
-				hovertemplate="<br>".join([
-				"value: %{r}",
-				"field: %{theta}"])
-				), 
-				current_row, current_column)
-		else:
-			fig.add_trace(go.Scatterpolar(
-				name = a_hp,
-				r = df['recorded'],
-				theta = df['field'],
-				mode = 'markers',
-				marker_color = "blue",
-				hovertemplate="<br>".join([
-				"value: %{r}",
-				"field: %{theta}"]),
-				showlegend=False), 
-				current_row, current_column)
-		current_column = current_column + 1
-		# end of line..
-		if current_column > ncol:
-			current_row = current_row + 1
-			current_column = 1
+	df = dict_hps[a_hp]
+	if verbose:
+		print(a_hp)
+		print(str(current_row) + " " + str(current_column))
+	if mylevel == 'level3':
+		fig.add_trace(go.Scatterpolar(
+		name =  "  erms",
+		r = df_erms_1['value'],
+		theta = df_erms_1['field'],
+		fill='toself',
+		fillcolor='red',
+		line_color='red',
+		hovertemplate="<br>".join([
+		"value: %{r}",
+		"field: %{theta}"]),
+		showlegend=False), 
+		current_row, current_column)		
+		fig.add_trace(go.Scatterpolar(
+		name = a_hp,
+		r = df['recorded'],
+		theta = df['field'],
+		mode = 'markers',
+		# marker=dict(color = melted_df_color),
+		marker_color = "blue",
+		hovertemplate="<br>".join([
+		"value: %{r}",
+		"field: %{theta}"])
+		), 
+		current_row, current_column)
+	else:
+		fig.add_trace(go.Scatterpolar(
+		name = a_hp,
+		r = df['recorded'],
+		theta = df['field'],
+		mode = 'markers',
+		marker_color = "blue",
+		hovertemplate="<br>".join([
+		"value: %{r}",
+		"field: %{theta}"]),
+		showlegend=False,
+		text="None"), 
+		current_row, current_column)
+	current_column = current_column + 1
+	# end of line..
+	if current_column > ncol:
+		current_row = current_row + 1
+		current_column = 1
 	fig.update_layout(
-		autosize=False,
-		width=ncol*700,
-		height=nrow*300,
+	autosize=False,
+	width=ncol*700,
+	height=nrow*300,
+	)
+	fig.update_layout(
+		polar=dict(
+			radialaxis=dict(
+				# showline=False,
+				range=[-1, 1],  # Set the range for the radial axis
+				tickvals=[0, 1],  # Specify the tick values
+				ticktext=['0', '1'],  # Specify the corresponding labels
+			),
+			# hide labels
+			angularaxis=dict(
+				showline=False,          # Set to False to hide the angular axis line
+				showticklabels=False,    # Set to False to hide the angular axis labels
+			)
+		),
+		showlegend=True
 	)
 	fig.show()
 
+def filter_dataframe(selected_value):
+	"""
+	Filter a dataframe giving a selected alue coming from a radio button
+
+
+	:param selected_value: value returned by the on_radio_button_change() function, it is a GS ID
+
+	:return: Dataframe of existing HP is a given GS
+	"""
+	hps_to_keep = list()
+	hps_gs = dict()
+	hps_gs['features'] = []
+	for i in range(len(selected_hp)):
+		gs_current = hps['features'][i]['properties']['Grid ID']
+		if gs_current == selected_value:
+		# if gs_current ==  radio_button_1.value:
+			hps_to_keep.append(i)
+		feat = [hps['features'][i] for i in hps_to_keep]
+	for i in range(len(feat)):
+		hps_gs['features'].append(feat[i])
+	selected_hp_gs = []
+	for i in range(len(hps_gs['features'])):
+		selected_hp_gs.append(hps_gs['features'][i]['properties']['EAMENA ID'])
+	return(selected_hp_gs)
+
+def filter_hp_by_gs(selected_hp):
+  l_GridIDs = []
+  for i in range(len(selected_hp)):
+    l_GridIDs.append(hps['features'][i]['properties']['Grid ID'])
+  l_GridIDs = list(set(l_GridIDs))
+  l_GridIDs.sort()
+  radio_button_1 = widgets.RadioButtons(
+    options = l_GridIDs,
+    description = 'Select a Grid Square:'
+  )
+  # Create an output widget to display the filtered DataFrame
+  output = widgets.Output()
+
+  def on_radio_button_change(change):
+      global filtered_df
+      selected_value = change.new
+      # print(selected_value)
+      with output:
+          # Clear previous output
+          output.clear_output()
+          # Call a function. Filter the DataFrame based on the selected value
+          filtered_df = filter_dataframe(selected_value)
+          print(filtered_df, end="")
+          # return(filtered_df)
+	# Link the RadioButtons widget to the change event
+	radio_button_1.observe(on_radio_button_change, names='value')
+	display(radio_button_1, output)
+filtered_data = filter_hp_by_gs(selected_hp)
