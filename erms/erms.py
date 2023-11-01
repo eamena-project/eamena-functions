@@ -206,14 +206,14 @@ def hps_subset_by_gs(hps, filtered_hp_gs):
 	l_new = []
 	for i in range(len(hps['features'])):
 	# selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
-	for key, value in hps['features'][i]['properties'].items():
-		# print(key)
-		# print(value)
-		if key == 'EAMENA ID' and value in filtered_hp_gs:
-		filtered_foo['geometry'] = hps['features'][i]['geometry']
-		filtered_foo['properties'] = hps['features'][i]['properties']
-		l_new.append(filtered_foo)
-		filtered_foo = {}
+		for key, value in hps['features'][i]['properties'].items():
+			# print(key)
+			# print(value)
+			if key == 'EAMENA ID' and value in filtered_hp_gs:
+			filtered_foo['geometry'] = hps['features'][i]['geometry']
+			filtered_foo['properties'] = hps['features'][i]['properties']
+			l_new.append(filtered_foo)
+			filtered_foo = {}
 	# recreate the structure of the original dataset
 	selected_hp_gs['features'] = l_new
 	# l_new[0]
