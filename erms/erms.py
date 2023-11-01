@@ -137,57 +137,57 @@ def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol 
 	df_erms_1.loc[df_erms_1['value'] == 0, 'value'] = -1
 	current_column, current_row = 1, 1
 	for a_hp in dict_hps.keys():
-	df = dict_hps[a_hp]
-	if verbose:
-		print(a_hp)
-		print(str(current_row) + " " + str(current_column))
-	if mylevel == 'level3':
-		fig.add_trace(go.Scatterpolar(
-		name =  "  erms",
-		r = df_erms_1['value'],
-		theta = df_erms_1['field'],
-		fill='toself',
-		fillcolor='red',
-		line_color='red',
-		hovertemplate="<br>".join([
-		"value: %{r}",
-		"field: %{theta}"]),
-		showlegend=False), 
-		current_row, current_column)		
-		fig.add_trace(go.Scatterpolar(
-		name = a_hp,
-		r = df['recorded'],
-		theta = df['field'],
-		mode = 'markers',
-		# marker=dict(color = melted_df_color),
-		marker_color = "blue",
-		hovertemplate="<br>".join([
-		"value: %{r}",
-		"field: %{theta}"])
-		), 
-		current_row, current_column)
-	else:
-		fig.add_trace(go.Scatterpolar(
-		name = a_hp,
-		r = df['recorded'],
-		theta = df['field'],
-		mode = 'markers',
-		marker_color = "blue",
-		hovertemplate="<br>".join([
-		"value: %{r}",
-		"field: %{theta}"]),
-		showlegend=False,
-		text="None"), 
-		current_row, current_column)
-	current_column = current_column + 1
-	# end of line..
-	if current_column > ncol:
-		current_row = current_row + 1
-		current_column = 1
+		df = dict_hps[a_hp]
+		if verbose:
+			print(a_hp)
+			print(str(current_row) + " " + str(current_column))
+		if mylevel == 'level3':
+			fig.add_trace(go.Scatterpolar(
+			name =  "  erms",
+			r = df_erms_1['value'],
+			theta = df_erms_1['field'],
+			fill='toself',
+			fillcolor='red',
+			line_color='red',
+			hovertemplate="<br>".join([
+			"value: %{r}",
+			"field: %{theta}"]),
+			showlegend=False), 
+			current_row, current_column)		
+			fig.add_trace(go.Scatterpolar(
+			name = a_hp,
+			r = df['recorded'],
+			theta = df['field'],
+			mode = 'markers',
+			# marker=dict(color = melted_df_color),
+			marker_color = "blue",
+			hovertemplate="<br>".join([
+			"value: %{r}",
+			"field: %{theta}"])
+			), 
+			current_row, current_column)
+		else:
+			fig.add_trace(go.Scatterpolar(
+			name = a_hp,
+			r = df['recorded'],
+			theta = df['field'],
+			mode = 'markers',
+			marker_color = "blue",
+			hovertemplate="<br>".join([
+			"value: %{r}",
+			"field: %{theta}"]),
+			showlegend=False,
+			text="None"), 
+			current_row, current_column)
+		current_column = current_column + 1
+		# end of line..
+		if current_column > ncol:
+			current_row = current_row + 1
+			current_column = 1
 	fig.update_layout(
-	autosize=False,
-	width=ncol*700,
-	height=nrow*300,
+		autosize=False,
+		width=(ncol*700) + 200,
+		height=(nrow*300) + 100,
 	)
 	fig.update_layout(
 		polar=dict(
