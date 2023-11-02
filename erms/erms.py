@@ -34,6 +34,11 @@ def db_query(GEOJSON_URL = None):
 	resp = requests.get(GEOJSON_URL)
 	return(resp.json())
 
+def db_export_geojson(geojson_data, output_file_path = "output.geojson"):
+	# Save the GeoJSON data to a file
+	with open(output_file_path, "w") as output_file:
+		json.dump(geojson_data, output_file, indent=2)
+
 def hps_list(hps = None):
 	"""
 	Store the EAMENA ID in a list 
