@@ -103,7 +103,7 @@ def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3
 	l_erms = []
 	dict_hps = {} 
 	# len(selected_hp)
-	for i in range(5):
+	for i in range(len(selected_hp)):
 		a_hp = selected_hp[i]
 		if verbose:
 			print("read: " + a_hp)
@@ -318,6 +318,7 @@ def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, ver
             print(a_hp)
             print(str(current_row) + " " + str(current_column))
         if mylevel == 'level3':
+			# ERMS
             fig.add_trace(go.Scatterpolar(
                 name="  erms",
                 r=df_erms_1['value'],
@@ -330,6 +331,17 @@ def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, ver
                     "field: %{theta}"]),
                 showlegend=False),
                 current_row, current_column)
+            fig.add_trace(go.Scatterpolar(
+                r=df_erms_1['value'],
+                theta=df_erms_1['field'],
+                mode='markers',
+                marker_color="red",
+                hovertemplate="<br>".join([
+                    "value: %{r}",
+                    "field: %{theta}"]),
+                name='Markers',  # Provide a name for the marker trace
+                showlegend=False,  # Show the legend for the marker trace
+            ), current_row, current_column)
             fig.add_trace(go.Scatterpolar(
                 name=a_hp,
                 r=df['recorded'],
