@@ -32,6 +32,7 @@ def db_query(GEOJSON_URL = None):
 	>> hps = erms.db_query()
 	"""
 	resp = requests.get(GEOJSON_URL)
+	print(resp.status_code) # 504 error on large datasets (> 1,000)
 	return(resp.json())
 
 def db_export_geojson(geojson_data, output_file_path = "output.geojson"):
@@ -70,7 +71,7 @@ def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/e
 	:return: Dataframe of ERMS individual fields
 	"""
 	df = pd.read_csv(tsv_file, delimiter = '\t')
-	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard"]]
+	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql']]
 	# df_listed = df.dropna()
 	# if verbose:
 	# 	print(df_listed.to_markdown())
@@ -87,7 +88,10 @@ def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-pr
 
 	:return: Dataframe of ERMS individual or aggregated fields
 	"""
-	mylevel = radio_button.value
+	if radio_button != None:
+		mylevel = radio_button.value
+	else:
+		mylevel = 'level3'
 	df_listed = erms_template(tsv_file)
 	df_erms = df_listed.copy()
 	df_erms['Enhanced record minimum standard'] = df_erms['Enhanced record minimum standard'].str.contains(r'Yes', case = False, na = False, regex = True).astype(int)
@@ -404,3 +408,5 @@ def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, ver
 
 # foo = {'f': {'a': 10, 'b': 'red'}, 'u': {'a': 20, 'b': 'blue'}, 'c': {'a': 30, 'b': 'green'}, 'k': {'a': 40, 'b': 'yellow'}}
 # l = ['red', 'yellow']
+
+# aa = db_query("https://database.eamena.org/api/search/export_results?paging-filter=1&tiles=true&format=geojson&reportlink=false&precision=6&total=1567&language=*&advanced-search=%5B%7B%22op%22%3A%22and%22%2C%2234cfea78-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22Sistan%22%7D%2C%2234cfea87-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22e6e6abc5-3470-45c0-880e-8b29959672d2%22%7D%7D%2C%7B%22op%22%3A%22or%22%2C%2234cfea78-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22South%20Khorasan%22%7D%2C%2234cfea87-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22e6e6abc5-3470-45c0-880e-8b29959672d2%22%7D%7D%2C%7B%22op%22%3A%22or%22%2C%2234cfea69-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2234cfea5d-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2234cfea73-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2234cfea43-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%224ed99706-2d90-449a-9a70-700fc5326fb1%22%7D%2C%2234cfea95-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22~%22%2C%22lang%22%3A%22en%22%2C%22val%22%3A%22%22%7D%7D%2C%7B%22op%22%3A%22and%22%2C%2234cfea81-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22gt%22%2C%22val%22%3A%222023-08-01%22%7D%2C%2234cfea4d-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%22d2e1ab96-cc05-11ea-a292-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%2C%2234cfea8a-c2c0-11ea-9026-02e7594ce0a0%22%3A%7B%22op%22%3A%22%22%2C%22val%22%3A%22%22%7D%7D%5D&resource-type-filter=%5B%7B%22graphid%22%3A%2234cfe98e-c2c0-11ea-9026-02e7594ce0a0%22%2C%22name%22%3A%22Heritage%20Place%22%2C%22inverted%22%3Afalse%7D%5D")
