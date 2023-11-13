@@ -106,6 +106,35 @@ def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-pr
 	# print(df_erms.to_markdown(index=False))
 	return(df_erms)
 
+
+def erms_field_colors(level = 'level1', cmap = 'Dark2'):
+	"""
+	Return a dataframe of colors based on one of the levels
+
+	:param level1: a level. Default 'level1'
+	:param cmap: a color ramp
+
+	:return: Dataframe of 'level' colors
+
+	:Example:
+	>> df_color = erms_field_colors()
+	"""
+	import matplotlib.pyplot as plt
+	from matplotlib.colors import to_hex
+	import pandas as pd
+
+	erms_template_df = erms_template()
+	erms_template_df = erms_template_df.drop('Enhanced record minimum standard', axis=1)
+	level1_cat = erms_template_df[level].unique()
+	my_cmap = plt.get_cmap(cmap)
+	level1_cmap = my_cmap(np.linspace(0, 1, len(level1_cat)))
+	level1_cmap = [to_hex(color) for color in level1_cmap]
+	df_color = pd.DataFrame(columns=(level, 'color'))
+	df_color[level] = level1_cat
+	df_color['color'] = level1_cmap
+	df_color = erms_template_df.merge(df_color, on=level, how='left')
+	return df_color
+
 def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3", verbose = False):
 	# Keys are EAMENA IDs and values are HP fields filled or not
 	level_values = df_listed[mylevel].unique()
