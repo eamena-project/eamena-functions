@@ -29,7 +29,7 @@ def db_query(GEOJSON_URL = None):
 
 	:Example: 
 	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
-	>> hps = erms.db_query()
+	>> hps = mds.db_query()
 	"""
 	resp = requests.get(GEOJSON_URL)
 	print(resp.status_code) # 504 error on large datasets (> 1,000)
@@ -50,8 +50,8 @@ def hps_list(hps = None):
 
 	:Example: 
 	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
-	>> hps = erms.db_query(GEOJSON_URL)
-	>> selected_hp = erms.hps_list(hps)
+	>> hps = mds.db_query(GEOJSON_URL)
+	>> selected_hp = mds.hps_list(hps)
 
 	"""
 	selected_hp = []
@@ -59,16 +59,16 @@ def hps_list(hps = None):
 		selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
 	return(selected_hp)
 
-def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/erms-template-readonly.tsv"):
+def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/mds-template-readonly.tsv"):
 	"""
-	Dataframe of ERMS individual fields
+	Dataframe of mds individual fields
 
-	Dataframe of ERMS individual fields
+	Dataframe of mds individual fields
 
-	:param tsv_file: the path to the read-only TSV file of ERMS
+	:param tsv_file: the path to the read-only TSV file of mds
 	:param radio_button: a value coming from a Jupyter NB radio button
 
-	:return: Dataframe of ERMS individual fields
+	:return: Dataframe of mds individual fields
 	"""
 	df = pd.read_csv(tsv_file, delimiter = '\t')
 	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql']]
@@ -77,37 +77,37 @@ def erms_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/e
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def erms_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/erms-template-readonly.tsv", radio_button = None):
+def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/mds-template-readonly.tsv", radio_button = None):
 	"""
-	Dataframe of ERMS individual or aggregated fields
+	Dataframe of mds individual or aggregated fields
 
-	Taking a level of aggregation (level1, level2, etc.), group and sum ERMS fields (level3) into broader categories
+	Taking a level of aggregation (level1, level2, etc.), group and sum mds fields (level3) into broader categories
 
-	:param tsv_file: the path to the read-only TSV file of ERMS
+	:param tsv_file: the path to the read-only TSV file of mds
 	:param radio_button: a value coming from a Jupyter NB radio button
 
-	:return: Dataframe of ERMS individual or aggregated fields
+	:return: Dataframe of mds individual or aggregated fields
 	"""
 	if radio_button != None:
 		mylevel = radio_button.value
 	else:
 		mylevel = 'level3'
-	df_listed = erms_template(tsv_file)
-	df_erms = df_listed.copy()
-	df_erms['Enhanced record minimum standard'] = df_erms['Enhanced record minimum standard'].str.contains(r'Yes', case = False, na = False, regex = True).astype(int)
-	df_erms = df_erms[[mylevel, "Enhanced record minimum standard"]]
-	df_erms.columns.values[0] = "field"
-	df_erms = df_erms.groupby(['field'])['Enhanced record minimum standard'].sum()
+	df_listed = mds_template(tsv_file)
+	df_mds = df_listed.copy()
+	df_mds['Enhanced record minimum standard'] = df_mds['Enhanced record minimum standard'].str.contains(r'Yes', case = False, na = False, regex = True).astype(int)
+	df_mds = df_mds[[mylevel, "Enhanced record minimum standard"]]
+	df_mds.columns.values[0] = "field"
+	df_mds = df_mds.groupby(['field'])['Enhanced record minimum standard'].sum()
 	print(f'You selected: {mylevel}')
-	df_erms = pd.DataFrame({
-		'field': df_erms.index,
-		'value' : df_erms.values
+	df_mds = pd.DataFrame({
+		'field': df_mds.index,
+		'value' : df_mds.values
 					})
-	# print(df_erms.to_markdown(index=False))
-	return(df_erms)
+	# print(df_mds.to_markdown(index=False))
+	return(df_mds)
 
 
-def erms_field_colors(level = 'level1', cmap = 'Dark2'):
+def mds_field_colors(level = 'level1', cmap = 'Dark2'):
 	"""
 	Return a dataframe of colors based on one of the levels
 
@@ -117,28 +117,28 @@ def erms_field_colors(level = 'level1', cmap = 'Dark2'):
 	:return: Dataframe of 'level' colors
 
 	:Example:
-	>> df_color = erms_field_colors()
+	>> df_color = mds_field_colors()
 	"""
 	import matplotlib.pyplot as plt
 	from matplotlib.colors import to_hex
 	import pandas as pd
 
-	erms_template_df = erms_template()
-	erms_template_df = erms_template_df.drop('Enhanced record minimum standard', axis=1)
-	level1_cat = erms_template_df[level].unique()
+	mds_template_df = mds_template()
+	mds_template_df = mds_template_df.drop('Enhanced record minimum standard', axis=1)
+	level1_cat = mds_template_df[level].unique()
 	my_cmap = plt.get_cmap(cmap)
 	level1_cmap = my_cmap(np.linspace(0, 1, len(level1_cat)))
 	level1_cmap = [to_hex(color) for color in level1_cmap]
 	df_color = pd.DataFrame(columns=(level, 'color'))
 	df_color[level] = level1_cat
 	df_color['color'] = level1_cmap
-	df_color = erms_template_df.merge(df_color, on=level, how='left')
+	df_color = mds_template_df.merge(df_color, on=level, how='left')
 	return df_color
 
 def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3", verbose = False):
 	# Keys are EAMENA IDs and values are HP fields filled or not
 	level_values = df_listed[mylevel].unique()
-	l_erms = []
+	l_mds = []
 	dict_hps = {} 
 	# len(selected_hp)
 	for i in range(len(selected_hp)):
@@ -158,12 +158,12 @@ def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3
 			# TODO: change to warning?
 			except:
 				if verbose:
-					print(" /!\ '" + a_field + "' listed in the ERMS dataframe is a level1 or level2 value, but is not a field listed in the database")
+					print(" /!\ '" + a_field + "' listed in the mds dataframe is a level1 or level2 value, but is not a field listed in the database")
 				a_value = None
 			if a_value is not None:
 				# row_num = df_res[df_res['field'] == df_field].index.tolist()
 				df_res.at[j, 'recorded'] = df_res.loc[j]['recorded'] + 1
-		l_erms.append(df_res)
+		l_mds.append(df_res)
 		dict_hps[a_hp] = df_res
 	return(dict_hps)
 
@@ -265,12 +265,12 @@ def hps_subset_by_gs(hps, filtered_hp_gs):
 	# len(selected_hp_gs['features'])
 	return(selected_hp_gs)
 
-# def plot_spidergraphs(dict_hps = None, df_erms = None, mylevel = "level3", ncol = 3, verbose = False):
+# def plot_spidergraphs(dict_hps = None, df_mds = None, mylevel = "level3", ncol = 3, verbose = False):
 # 	ncol = 3
 # 	nrow = math.ceil(len(dict_hps.keys()) / ncol)
 # 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}]*ncol]*nrow, subplot_titles=tuple(dict_hps.keys()))
-# 	df_erms_1 = df_erms.copy() # to add +1 later
-# 	df_erms_1.loc[df_erms_1['value'] == 0, 'value'] = -1
+# 	df_mds_1 = df_mds.copy() # to add +1 later
+# 	df_mds_1.loc[df_mds_1['value'] == 0, 'value'] = -1
 # 	current_column, current_row = 1, 1
 # 	for a_hp in dict_hps.keys():
 # 		df = dict_hps[a_hp]
@@ -279,9 +279,9 @@ def hps_subset_by_gs(hps, filtered_hp_gs):
 # 			print(str(current_row) + " " + str(current_column))
 # 		if mylevel == 'level3':
 # 			fig.add_trace(go.Scatterpolar(
-# 			name =  "  erms",
-# 			r = df_erms_1['value'],
-# 			theta = df_erms_1['field'],
+# 			name =  "  mds",
+# 			r = df_mds_1['value'],
+# 			theta = df_mds_1['field'],
 # 			fill='toself',
 # 			fillcolor='red',
 # 			line_color='red',
@@ -343,12 +343,12 @@ def hps_subset_by_gs(hps, filtered_hp_gs):
 # 	)
 # 	fig.show()
 
-def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, verbose=False):
+def plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, verbose=False):
     # ncol = 3
     nrow = math.ceil(len(dict_hps.keys()) / ncol)
     fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}] * ncol] * nrow, subplot_titles=tuple(dict_hps.keys()))
-    df_erms_1 = df_erms.copy()  # to add +1 later
-    df_erms_1.loc[df_erms_1['value'] == 0, 'value'] = -1
+    df_mds_1 = df_mds.copy()  # to add +1 later
+    df_mds_1.loc[df_mds_1['value'] == 0, 'value'] = -1
     current_column, current_row = 1, 1
     for a_hp in dict_hps.keys():
         df = dict_hps[a_hp]
@@ -356,11 +356,11 @@ def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, ver
             print(a_hp)
             print(str(current_row) + " " + str(current_column))
         if mylevel == 'level3':
-			# ERMS
+			# mds
             fig.add_trace(go.Scatterpolar(
-                name="  erms",
-                r=df_erms_1['value'],
-                theta=df_erms_1['field'],
+                name="  mds",
+                r=df_mds_1['value'],
+                theta=df_mds_1['field'],
                 fill='toself',
                 fillcolor='red',
                 line_color='red',
@@ -370,8 +370,8 @@ def plot_spidergraphs(dict_hps=None, df_erms=None, mylevel="level3", ncol=3, ver
                 showlegend=False),
                 current_row, current_column)
             fig.add_trace(go.Scatterpolar(
-                r=df_erms_1['value'],
-                theta=df_erms_1['field'],
+                r=df_mds_1['value'],
+                theta=df_mds_1['field'],
                 mode='markers',
                 marker_color="red",
                 hovertemplate="<br>".join([
