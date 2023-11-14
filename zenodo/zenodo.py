@@ -1,15 +1,11 @@
 
-
-def field_values(fieldname = None):
-    l = list()
-    for i in range(len(data['features'])):
-        l.append(data['features'][i]['properties'][fieldname])
-    return(l)
-
-def summed_values(l = None):
+def summed_values(data = None, fieldname = None):
     import pandas as pd
     from collections import Counter
 
+    l = list()
+    for i in range(len(data['features'])):
+        l.append(data['features'][i]['properties'][fieldname])
     split_names = [name.strip() for item in l if item is not None for name in item.split(',')]
     name_counts = Counter(split_names)
     df = pd.DataFrame.from_dict(name_counts, orient='index').reset_index()
@@ -17,33 +13,32 @@ def summed_values(l = None):
     df = df.sort_values('n_hp', ascending=False)
     return df
 
-def zenodo_contributors(contributors_layout = {"name": None, "affiliation": None, "orcid": None}):
-    l = field_values("Assessment Investigator - Actor")
-    df = summed_values(l)
+def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Actor", contributors_layout = {"name": None, "affiliation": None, "orcid": None}):
+    df = summed_values(data, fieldname)
     CONTRIBUTORS = list()
     for name in df['name']:
-        contributors_layout['name'] = name
+        contibut = contributors_layout.copy()
+        contibut['name'] = name
         # TODO: "affiliation" and "orcid"
-        CONTRIBUTORS.append(contributors_layout.copy())
+        contibut = {key: value for key, value in contibut.items() if value is not None and value != 'null'}
+        CONTRIBUTORS.append(contibut)
     return CONTRIBUTORS
 
-def zenodo_keywords(constant = ['EAMENA', 'MaREA'], others = ["Country Type", "Cultural Period Type"]):
+def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA'], fields = ["Country Type", "Cultural Period Type"]):
     KEYWORDS = list()
     KEYWORDS = KEYWORDS + constant
-    for i in others:
-        l = field_values(i)
-        df = summed_values(l)
+    for fieldname in fields:
+        df = summed_values(data, fieldname)
         KEYWORDS = KEYWORDS + df['name'].tolist()
     KEYWORDS.remove('Unknown')
     return KEYWORDS
 
-def zenodo_dates(fields = ["Assessment Activity Date"]):
+def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
     from datetime import datetime
 
     ldates = list()
-    for i in fields:
-        l = field_values("Assessment Activity Date")
-        df = summed_values(l)
+    for fieldname in fields:
+        df = summed_values(data, fieldname)
         ldates = ldates + df['name'].tolist() 
     ldates.remove('None')
     # date_strings = [x for x in date_strings if x is not 'None']
@@ -54,3 +49,8 @@ def zenodo_dates(fields = ["Assessment Activity Date"]):
     max_date_str = max_date.strftime('%Y-%m-%d')
     DATES = [{'type': 'created', 'start': min_date_str, 'end': max_date_str}]
     return DATES
+
+# %%
+
+FILENAME = TITLE = "aaaa"
+# %%
