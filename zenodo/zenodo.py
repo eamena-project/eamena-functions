@@ -1,5 +1,9 @@
 
 def summed_values(data = None, fieldname = None):
+    """
+    Creates a dataframe summing the number of occurences for a given field
+    
+    """
     import pandas as pd
     from collections import Counter
 
@@ -13,7 +17,12 @@ def summed_values(data = None, fieldname = None):
     df = df.sort_values('n_hp', ascending=False)
     return df
 
-def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Actor", contributors_layout = {"name": None, "affiliation": None, "orcid": None}):
+def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Actor", 
+                        contributors_layout = {"name": None, "type": "DataCollector"}):
+    """
+    Creates dictionary of contributors, filling a dictionary layout (`contributors_layout`). Contributors are sorted according to the total number of their name occurences in the selected `fieldname`.
+    
+    """
     df = summed_values(data, fieldname)
     CONTRIBUTORS = list()
     for name in df['name']:
@@ -25,6 +34,10 @@ def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Acto
     return CONTRIBUTORS
 
 def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA'], fields = ["Country Type", "Cultural Period Type"]):
+    """
+    Creates a list of keywords with a constant basis (`constant`) and parsed supplementary `fields` (for space-time keywords)
+    
+    """
     KEYWORDS = list()
     KEYWORDS = KEYWORDS + constant
     for fieldname in fields:
@@ -34,6 +47,9 @@ def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA'], fields = ["Coun
     return KEYWORDS
 
 def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
+    """
+    Get the min and the max of dates recorded in `fields`    
+    """
     from datetime import datetime
 
     ldates = list()
@@ -50,7 +66,3 @@ def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
     DATES = [{'type': 'created', 'start': min_date_str, 'end': max_date_str}]
     return DATES
 
-# %%
-
-FILENAME = TITLE = "aaaa"
-# %%
