@@ -72,6 +72,7 @@ def zenodo_related_identifiers(site = 'https://zenodo.org/oai2d', set = 'user-ea
 
     :param reference_data_list: the list of reference data already existing in the 'eamena' Zenodo community. These objects will not be added as 'isContinuedBy' in the metadata key 'related_identifiers' but as 'isDescribedBy'
     """
+    import pandas as pd
     from sickle import Sickle
 
     # reference_data_list = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/lod/zenodo/reference_data_list.tsv"
