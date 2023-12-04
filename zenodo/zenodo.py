@@ -5,6 +5,7 @@ def summed_values(data = None, fieldname = None):
     """
     Creates a dataframe summing the number of occurences for a given field
     
+    :param data: dictionary (JSON)
     """
     import pandas as pd
     from collections import Counter
@@ -24,7 +25,7 @@ def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Acto
     """
     Creates dictionary of contributors, filling a dictionary layout (`contributors_layout`). Contributors are sorted according to the total number of their name occurences in the selected `fieldname`.
     
-    :param data: dictionary
+    :param data: dictionary (JSON)
     """
     if fieldname in list(data['features'][0]['properties'].keys()):
     # HPs
@@ -45,10 +46,11 @@ def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA', 'Cultural Herita
     """
     Creates a list of keywords with a constant basis (`constant`) and parsed supplementary `fields` (for space-time keywords)
     
+    :param data: dictionary (JSON)
     """
     KEYWORDS = list()
     KEYWORDS = KEYWORDS + constant
-    if fields in list(data['features'][0]['properties'].keys()):
+    if all(elem in list(data['features'][0]['properties'].keys()) for elem in fields):
     # HPs
         for fieldname in fields:
             df = summed_values(data, fieldname)
@@ -59,10 +61,12 @@ def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA', 'Cultural Herita
 def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
     """
     Get the min and the max of dates recorded in `fields`    
+
+    :param data: dictionary (JSON)
     """
     from datetime import datetime
 
-    if fields in list(data['features'][0]['properties'].keys()):
+    if all(elem in list(data['features'][0]['properties'].keys()) for elem in fields):
     # HPs
         ldates = list()
         for fieldname in fields:
