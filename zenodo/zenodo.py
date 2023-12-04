@@ -42,14 +42,15 @@ def zenodo_contributors(data = None, fieldname = "Assessment Investigator - Acto
         CONTRIBUTORS = ''
     return CONTRIBUTORS
 
-def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA', 'Cultural Heritage'], fields = ["Country Type", "Cultural Period Type"]):
+def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA', 'Cultural Heritage'], additional = None, fields = ["Country Type", "Cultural Period Type"]):
     """
     Creates a list of keywords with a constant basis (`constant`) and parsed supplementary `fields` (for space-time keywords)
     
     :param data: dictionary (JSON)
+    :param additional: additional keyworks provided by the user
     """
     KEYWORDS = list()
-    KEYWORDS = KEYWORDS + constant
+    KEYWORDS = KEYWORDS + constant + additional
     if all(elem in list(data['features'][0]['properties'].keys()) for elem in fields):
     # HPs
         for fieldname in fields:
