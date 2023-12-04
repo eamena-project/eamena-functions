@@ -109,7 +109,7 @@ def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-pro
 
 def mds_field_colors(level = 'level1', cmap = 'Dark2'):
 	"""
-	Return a dataframe of colors based on one of the levels
+	Return a dataframe of colors based on one of the levels to color graph nodes
 
 	:param level1: a level. Default 'level1'
 	:param cmap: a color ramp
