@@ -126,7 +126,7 @@ def zenodo_related_identifiers(site = 'https://zenodo.org/oai2d', set = 'user-ea
 
 def zenodo_statistics(data = None):
     """
-    Calculate basic statistics on HPs. Return a list with: the total number of Heritage Places; the number of Heritage Places have 1, 2, 3, ... geometries; etc.
+    Calculate basic statistics on HPs. Return a list with: the total number of Heritage Places; the number of Heritage Places layered by number of geometries (some have 1, 2, 3, ...); the total number of geometries; etc.
 
     :param data: dictionary of Heritage Places (JSON)
     """
@@ -143,6 +143,9 @@ def zenodo_statistics(data = None):
     HPS_NB = sum(HPS_GEOM_NB.values())   
     LIST_HPS.append(HPS_NB)
     LIST_HPS.append(HPS_GEOM_NB)
+    HPS_GEOM_NB_TOTAL = {key: key * value for key, value in HPS_GEOM_NB.items()}
+    HPS_GEOM_NB_TOTAL = sum(HPS_GEOM_NB_TOTAL.values())
+    LIST_HPS.append(HPS_GEOM_NB_TOTAL)
     return(LIST_HPS)
 
 # #%% test
@@ -167,3 +170,5 @@ def zenodo_statistics(data = None):
 # # # %%
 
 # # %%
+
+# %%
