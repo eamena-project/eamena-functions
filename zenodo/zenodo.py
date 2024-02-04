@@ -89,7 +89,7 @@ def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
 
 def zenodo_related_identifiers(site = 'https://zenodo.org/oai2d', set = 'user-eamena', metadataPrefix = 'oai_dc', reference_data_list = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/lod/zenodo/reference_data_list.tsv"):
     """
-    Parse the 'EAMENA database' community in Zenodo ('user-eamena') to check if there are already uploaded datasets. Handle differently the refrence data (collections, RMs, ...) and the datasets, or business data. The former are 'isDescribedBy' related identifiers, whereas the latter are 'isContinuedBy' related resources.
+    Parse the 'EAMENA database' community in Zenodo ('user-eamena') to check if there are already uploaded datasets. Handle differently the reference data (collections, RMs, ...) and the datasets (Sistan part 1, etc.), or business data. Reference data are 'isDescribedBy' related identifiers, whereas the datasets are 'isContinuedBy' related resources.
 
     :param reference_data_list: the list of reference data already existing in the 'eamena' Zenodo community. These objects will not be added as 'isContinuedBy' in the metadata key 'related_identifiers' but as 'isDescribedBy'
     """
@@ -107,7 +107,7 @@ def zenodo_related_identifiers(site = 'https://zenodo.org/oai2d', set = 'user-ea
     l = list()
     for record in records:
         l.append(record.metadata['identifier'][0])
-    # remove the reference data
+    # rm the reference data
     l_isContinuedBy = [x for x in l if x not in l_isDescribedBy]
     ## create the record
     # business data
@@ -171,4 +171,7 @@ def zenodo_statistics(data = None):
 
 # # %%
 
+# %%
+
+# zenodo_related_identifiers()
 # %%
