@@ -77,7 +77,7 @@ def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/ea
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dev/data_quality/mds-template-readonly.tsv", radio_button = None):
+def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/dbs/database.eamena/data/reference_data/mds/mds-template-readonly.tsv", radio_button = None):
 	"""
 	Dataframe of mds individual or aggregated fields
 
