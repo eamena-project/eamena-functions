@@ -66,11 +66,10 @@ def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/ea
 	Dataframe of mds individual fields
 
 	:param tsv_file: the path to the read-only TSV file of mds
-	:param radio_button: a value coming from a Jupyter NB radio button
 
 	:return: Dataframe of mds individual fields
 	"""
-	df = pd.read_csv(tsv_file, delimiter = '\t')
+	df = pd.read_csv(tsv_file, delimiter = '\t', skip_blank_lines = True)
 	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql','color']]
 	# df_listed = df.dropna()
 	# if verbose:
