@@ -71,7 +71,7 @@ def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/ea
 	:return: Dataframe of mds individual fields
 	"""
 	df = pd.read_csv(tsv_file, delimiter = '\t')
-	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql']]
+	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql','color']]
 	# df_listed = df.dropna()
 	# if verbose:
 	# 	print(df_listed.to_markdown())
