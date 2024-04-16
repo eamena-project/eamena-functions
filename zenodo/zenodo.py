@@ -56,7 +56,10 @@ def zenodo_keywords(data = None, constant = ['EAMENA', 'MaREA', 'Cultural Herita
         for fieldname in fields:
             df = summed_values(data, fieldname)
             KEYWORDS = KEYWORDS + df['name'].tolist()
-        KEYWORDS.remove('Unknown')
+        try:
+            KEYWORDS.remove('Unknown')
+        except ValueError:
+            pass
     return KEYWORDS
 
 def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
