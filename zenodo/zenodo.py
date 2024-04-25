@@ -76,7 +76,9 @@ def zenodo_dates(data = None, fields = ["Assessment Activity Date"]):
         for fieldname in fields:
             df = summed_values(data, fieldname)
             ldates = ldates + df['name'].tolist() 
-        ldates.remove('None')
+        if 'None' in ldates:
+            ldates.remove('None')
+        # ldates.remove('None')
         # date_strings = [x for x in date_strings if x is not 'None']
         date_objects = [datetime.strptime(date, '%Y-%m-%d') for date in ldates]
         min_date = min(date_objects)
