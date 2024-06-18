@@ -72,11 +72,16 @@ def img_grid(df = None, cases_img_path = "https://raw.githubusercontent.com/eame
 	# grid_img.save('image_grid.jpg')
 	return(grid_img)
 
-
-import pandas as pd
-
-list_path = 'https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference-data/concepts/heritage_places/cases/list.tsv'
-df = pd.read_csv(list_path, sep='\t')
-grid_img = img_grid(df)
-# print(type(grid_img))
-grid_img.show()
+def img_md(df = None, cases_img_path = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference-data/concepts/heritage_places/cases/img/"):
+	"""
+	TODO:
+	Create a Markdown table with the images
+	"""
+	df['image_path'] = cases_img_path + df['image']
+	markdown_table = "| Label | Image |\n|---|---|\n"
+	for index, row in df.iterrows():
+		image_markdown = f'<img src="{row["image_path"]}" width="300">'
+		image_markdown = f'{row["label"]}<br>' + image_markdown # the label above
+		image_markdown = image_markdown + f'<br><small>{row["uuid"]}</small>' # the UUID below
+		markdown_table += f"| {row['label']} | {image_markdown} |\n"
+	# display(Markdown(markdown_table))
