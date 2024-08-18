@@ -182,11 +182,12 @@ def zenodo_statistics(data = None):
 # zenodo_related_identifiers()
 # %%
 
-def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_part1_hps.zip?download=1", output_directory = 'extracted_files', verbose=True):
+def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_part1_hps.zip?download=1", file_extension='.geojson', output_directory='extracted_files', verbose=True):
     """
     Read Zenodo files (GeoJSON), returns a geopandas dataframe.
 
     :param file_url: the Zenodo URL of the download
+    :param file_extension: the file extension of the file to download (default: '.geojson')
     :param output_directory: the output directory 
     """
     import os
@@ -211,7 +212,7 @@ def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_par
         zip_contents = zf.namelist()
         
         # Find the GeoJSON file
-        geojson_file = next((f for f in zip_contents if f.lower().endswith('.geojson')), None)
+        geojson_file = next((f for f in zip_contents if f.lower().endswith(file_extension)), None)
         
         if geojson_file:
             # Extract only the GeoJSON file to the output directory
@@ -228,3 +229,70 @@ def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_par
     # Extract the first feature as a GeoDataFrame
     # first_feature_gdf = gdf.iloc[[0]]  # iloc[0] gets the first feature; using [[0]] preserves it as a GeoDataFrame
 
+def zenodo_folium(gdf = None, zoom_start=12):
+    """
+    Plot a geopandas on a folium map.
+
+    :param gdf: a geopandas dataframe, maybe heritated form the zenodo_read() function
+    :param zoom_start: starting zoom. Default 12. 
+    """
+    import folium
+
+    # Get the centroid and center the map
+    centroid = gdf.geometry.centroid.iloc[0]
+    map_center = [centroid.y, centroid.x]
+    my_map = folium.Map(location=map_center, zoom_start=zoom_start)
+
+    folium.GeoJson(gdf.__geo_interface__).add_to(my_map)
+    return my_map
+
+def zenodo_folium_by_HP(gdf = None, id_field = 'EAMENA ID', zoom_start=12):
+    """
+    Create an interactive folium map for a Jupyter NB, allowing a user to select an HP and having a zoom in (NOT WORKING)
+
+    :param gdf: a geopandas dataframe, maybe heritated form the zenodo_read() function
+    :param id_field: the selection will be on this field.
+    :param zoom_start: starting zoom. Default 12. 
+    """
+    import ipywidgets as widgets
+    from IPython.display import display
+    import folium
+
+    # Create a list of unique EAMENA IDs
+    eamena_ids = gdf[id_field].unique()
+
+    # Create a dropdown widget
+    dropdown = widgets.Dropdown(
+        options=eamena_ids,
+        description=f'{id_field}:',
+        value=eamena_ids[0],  # Default selection is the first option
+        style={'description_width': 'initial'}
+    )
+
+    # Function to update the map based on the selected ID
+    def update_map(eamena_id):
+        # Filter GeoDataFrame for the selected EAMENA ID
+        selected_feature_gdf = gdf[gdf[id_field] == eamena_id]
+
+        # Get the centroid of the selected feature
+        centroid = selected_feature_gdf.geometry.centroid.iloc[0]
+        map_center = [centroid.y, centroid.x]
+
+        # Create a folium map centered at the centroid of the selected feature
+        my_map = folium.Map(location=map_center, zoom_start=zoom_start)
+
+        # Add the selected feature to the map using GeoJSON
+        folium.GeoJson(selected_feature_gdf.__geo_interface__).add_to(my_map)
+
+        display(my_map)
+
+    # Observe changes in the dropdown selection and update the map
+    def on_dropdown_change(change):
+        if change['type'] == 'change' and change['name'] == 'value':
+            update_map(change['new'])
+
+    dropdown.observe(on_dropdown_change)
+
+    # Display the dropdown and an initial map
+    display(dropdown)
+    update_map(eamena_ids[100])  # Initial map with the first ID
