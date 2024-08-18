@@ -1,3 +1,9 @@
+##################################################################################################################
+## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/reference_data.py ##
+## and																											##
+## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/business_data.py  ##
+##################################################################################################################
+
 import argparse
 import pandas as pd
 import numpy as np
@@ -31,12 +37,16 @@ def db_query(GEOJSON_URL = None):
 	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
 	>> hps = mds.db_query()
 	"""
+	import requests
+
 	resp = requests.get(GEOJSON_URL)
 	print(resp.status_code) # 504 error on large datasets (> 1,000)
 	return(resp.json())
 
 def db_export_geojson(geojson_data, output_file_path = "output.geojson"):
 	# Save the GeoJSON data to a file
+	import json
+
 	with open(output_file_path, "w") as output_file:
 		json.dump(geojson_data, output_file, indent=2)
 
@@ -63,8 +73,6 @@ def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/ea
 	"""
 	Dataframe of mds individual fields
 
-	Dataframe of mds individual fields
-
 	:param tsv_file: the path to the read-only TSV file of mds
 
 	:return: Dataframe of mds individual fields
@@ -76,7 +84,7 @@ def mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/ea
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/mds/mds-template-readonly.tsv", radio_button = None):
+def mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/rm/hp/mds/mds-template-readonly.tsv", radio_button = None):
 	"""
 	Dataframe of mds individual or aggregated fields
 
@@ -169,7 +177,7 @@ def hps_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3
 
 def filter_dataframe(hps, selected_hp, selected_value):
 	"""
-	Filter a dataframe giving a selected alue coming from a radio button
+	Filter a dataframe giving a selected value coming from a radio button
 
 	:param hps: HPs in a dict shape (GeoJSON)
 	:param selected_hp: a list of HPs IDs

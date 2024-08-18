@@ -1,3 +1,8 @@
+##################################################################################################################
+## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/reference_data.py ##
+## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/business_data.py  ##
+####################################################################################################################
+
 def img_fetch(url, label, uuid, number, new_width=300):
 	"""
 	Function to fetch, resize images and add text

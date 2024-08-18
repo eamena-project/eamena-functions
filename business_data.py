@@ -1,7 +1,49 @@
-##################################################################################################################
-## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/reference_data.py ##
-## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/business_data.py  ##
-####################################################################################################################
+# bunch of functions to manage business data
+
+
+def db_query(GEOJSON_URL = None):
+	"""
+	Return a JSON file (GeoJSON) from a GeoJSON URL
+
+	Use the Arches REST API with a GeoJSON URL (in Arches: Export > GeoJSON URL) to collect selected Heritage Places in a GeoJSON format
+
+	:param GEOJSON_URL: The GeoJSON URL
+
+	:Example: 
+	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
+	>> hps = mds.db_query()
+	"""
+	import requests
+
+	resp = requests.get(GEOJSON_URL)
+	print(resp.status_code) # 504 error on large datasets (> 1,000)
+	return(resp.json())
+
+def db_export_geojson(geojson_data, output_file_path = "output.geojson"):
+	# Save the GeoJSON data to a file
+	import json
+
+	with open(output_file_path, "w") as output_file:
+		json.dump(geojson_data, output_file, indent=2)
+
+def hp_list(hps = None):
+	"""
+	Store the EAMENA ID in a list 
+
+	:param hps: a dict() coming from reading of a JSON (GeoJSON). See the function `db_query()`
+
+	:return: A list of EAMENA IDs
+
+	:Example: 
+	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
+	>> hps = mds.db_query(GEOJSON_URL)
+	>> selected_hp = mds.hps_list(hps)
+
+	"""
+	selected_hp = []
+	for i in range(len(hps['features'])):
+		selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
+	return(selected_hp)
 
 def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65ebbb9cb656.json", verbose=True):
   """
@@ -41,7 +83,7 @@ def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65
     })
   return gs_with_0_hp
 
-def nb_hp_by_gs(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv',  verbose=True):
+def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv',  verbose=True):
   """
   Merge the counts of nb of HP by GS recorded in the EAMENA database (first ragument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
 
@@ -79,7 +121,7 @@ def nb_hp_by_gs(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojs
   # Save the updated GeoDataFrame as GeoJSON
 
 
-def grid_merge_info(geometries = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/EAMENA_Grid.geojson", uuids = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/data-1688403740400-1.csv"):
+def gs_merge_info(geometries = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/EAMENA_Grid.geojson", uuids = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/data-1688403740400-1.csv"):
 	"""
 	Work on grids
 
@@ -88,5 +130,3 @@ def grid_merge_info(geometries = "https://raw.githubusercontent.com/eamena-proje
 	
 	"""
 	pass
-
-
