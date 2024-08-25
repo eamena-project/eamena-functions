@@ -184,11 +184,14 @@ def zenodo_statistics(data = None):
 
 def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_part1_hps.zip?download=1", file_extension='.geojson', output_directory='extracted_files', verbose=True):
     """
-    Read Zenodo files (GeoJSON), returns a geopandas dataframe.
+    Read Zenodo files (GeoJSON files, zipped or not), returns a geopandas dataframe.
 
     :param file_url: the Zenodo URL of the download
     :param file_extension: the file extension of the file to download (default: '.geojson')
     :param output_directory: the output directory 
+
+    >>> geojson_data = zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_part1_hps.zip?download=1")
+    >>> geojson_data = zenodo_read(file_url="https://zenodo.org/records/13329575/files/EAMENA_Grid_contour.geojson?download=1")
     """
     import os
     import wget
@@ -198,32 +201,40 @@ def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_par
     output_file = wget.download(file_url)
     if verbose:
         print(f"Downloaded file: {output_file}")
-    # Path to the downloaded ZIP file
-    zip_file_path = output_file # 'downloaded_file.zip'  # Replace with the actual path to your ZIP file
+    if zipfile.is_zipfile(output_file):
+        if verbose:
+            print(f"Try to read a ZIP file")
+        # Path to the downloaded ZIP file
+        zip_file_path = output_file # 'downloaded_file.zip'  # Replace with the actual path to your ZIP file
 
-    # Directory to extract the GeoJSON file
-    # output_directory = 'extracted_files'
-    # TODO: replace this by a temp file
-    os.makedirs(output_directory, exist_ok=True)
+        # Directory to extract the GeoJSON file
+        # output_directory = 'extracted_files'
+        # TODO: replace this by a temp file
+        os.makedirs(output_directory, exist_ok=True)
 
-    # Open the ZIP file
-    with zipfile.ZipFile(zip_file_path, 'r') as zf:
-        # List the contents of the ZIP file
-        zip_contents = zf.namelist()
-        
-        # Find the GeoJSON file
-        geojson_file = next((f for f in zip_contents if f.lower().endswith(file_extension)), None)
-        
-        if geojson_file:
-            # Extract only the GeoJSON file to the output directory
-            zf.extract(geojson_file, output_directory)
-            geojson_data = os.path.join(output_directory, geojson_file)
-            if verbose:
-                print(f"Extracted GeoJSON file to: {geojson_data}")
-        else:
-            if verbose:
-                print("No GeoJSON file found in the ZIP archive.")
-        # Load the GeoJSON file
+        # Open the ZIP file
+        with zipfile.ZipFile(zip_file_path, 'r') as zf:
+            # List the contents of the ZIP file
+            zip_contents = zf.namelist()
+            
+            # Find the GeoJSON file
+            geojson_file = next((f for f in zip_contents if f.lower().endswith(file_extension)), None)
+            
+            if geojson_file:
+                # Extract only the GeoJSON file to the output directory
+                zf.extract(geojson_file, output_directory)
+                geojson_data = os.path.join(output_directory, geojson_file)
+                if verbose:
+                    print(f"Extracted GeoJSON file to: {geojson_data}")
+            else:
+                if verbose:
+                    print("No GeoJSON file found in the ZIP archive.")
+            # Load the GeoJSON file
+    if not zipfile.is_zipfile(output_file):
+        if verbose:
+            print(f"Try to read a GeoJSON file")
+        # TODO: test if GeoJSON
+        geojson_data = output_file
     gdf = gpd.read_file(geojson_data)
     return gdf
     # Extract the first feature as a GeoDataFrame

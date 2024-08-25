@@ -48,6 +48,8 @@ def hp_mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project
 
 	:return: Dataframe of mds individual fields
 	"""
+	import pandas as pd
+
 	df = pd.read_csv(tsv_file, delimiter = '\t', skip_blank_lines = True)
 	df_listed = df[["level1", "level2", "level3", "Enhanced record minimum standard",'uuid_sql','color']]
 	# df_listed = df.dropna()
@@ -66,6 +68,8 @@ def hp_mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-
 
 	:return: Dataframe of mds individual or aggregated fields
 	"""
+	import pandas as pd
+
 	if radio_button != None:
 		mylevel = radio_button.value
 	else:
@@ -100,6 +104,7 @@ def hp_mds_field_colors(level = 'level1', cmap = 'Dark2'):
 	import matplotlib.pyplot as plt
 	from matplotlib.colors import to_hex
 	import pandas as pd
+	import numpy as np
 
 	hp_mds_template_df = hp_mds_template()
 	hp_mds_template_df = hp_mds_template_df.drop('Enhanced record minimum standard', axis=1)
@@ -119,6 +124,9 @@ def hp_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3"
 	# create a dictionnary with the EAMENA ID as a key, and fields with values to assess which fields have been filled.
 	# exemple:
 	# dict_hps = mds.hps_dict(hps, selected_hp, df_listed, mylevel = radio_button.value)
+	import pandas as pd
+	import numpy as np
+
 	level_values = df_listed[mylevel].unique()
 	l_mds = []
 	dict_hps = {} 
@@ -212,7 +220,7 @@ def filter_hp_by_gs(hps, selected_hp):
 		global filtered_hp_gs
 		with output:
 			output.clear_output()
-			filtered_hp_gs = filter_dataframe(hps, selected_hp, selected_value)
+			filtered_hp_gs = hp_filter_dataframe(hps, selected_hp, selected_value)
 			# Print or display the result
 			print(filtered_hp_gs, end="")
 
@@ -344,10 +352,21 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 	)
 	fig.show()
 
-#%% 
-# concepst
+def hp_concepts_cases_img(hp_cases_path = 'https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/concepts/hp/cases/'):
+	"""
+	Photos of iconic cases of threats types (agricole, vandalsim, etc.)
 
-cases_path = "/content/eamena-data/reference_data/concepts/hp/cases/"
-cases_img_path = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/concepts/hp/cases/img/" # cases_path + "img/"
-# list
-list_path = 'https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/concepts/hp/cases/list.tsv'
+	:param hp_cases_path: the root of the hp cases' path
+
+	:return: Dataframe of cases, with UUID, image paths, etc.
+
+	:Example:
+	>> hp_concepts_cases_img()
+	"""
+	import pandas as pd
+
+	hp_cases_path_img = hp_cases_path + "img/"
+	hp_cases_path_list = hp_cases_path + "list.tsv"
+	df_list = pd.read_csv(hp_cases_path_list, sep='\t')
+	df_list['image_path'] = hp_cases_path_img + df_list['image']
+	return(df_list)
