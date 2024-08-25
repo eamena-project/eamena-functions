@@ -240,6 +240,45 @@ def zenodo_read(file_url = "https://zenodo.org/records/10375902/files/sistan_par
     # Extract the first feature as a GeoDataFrame
     # first_feature_gdf = gdf.iloc[[0]]  # iloc[0] gets the first feature; using [[0]] preserves it as a GeoDataFrame
 
+def zenodo_read_metadata(zenodo_oai = 'https://zenodo.org/oai2d', metadataPrefix='oai_dc', zenodo_community='user-eamena', verbose=True):
+    """
+    Read Zenodo metadata from a community, returns a geopandas dataframe.
+
+    :param zenodo_oai: the URL of the Zenodo OAI API
+    :param metadataPrefix: the Zenodo metadata prefix
+    :param zenodo_community: the Zenodo community
+
+    >>> zenodo_read_metadata()
+    """
+    import sickle
+    from sickle import Sickle
+    import pandas as pd
+
+    sickle = Sickle(zenodo_oai)
+    records = sickle.ListRecords(metadataPrefix=metadataPrefix, set=zenodo_community)
+
+    data = []
+    for record in records:
+        metadata = record.metadata
+        title = metadata.get('title', ['No Title'])[0]
+        # collectors = metadata.get('creator', ['Unknown'])
+        collectors = metadata.get('contributor')
+        # badges = metadata.get('badge', ['No Badges'])
+        doi = metadata.get('identifier')
+
+        data.append({
+            'Title': title,
+            'Data Collector': collectors,
+            'Doi': doi[0]
+        })
+        # Safety break to avoid too long loops during testing
+        # Remove or modify this based on actual needs
+        if len(data) > 20:
+            break
+    df = pd.DataFrame(data)
+    df.sort_values(by='Title', ascending=False)
+    return df
+
 def zenodo_folium(gdf = None, zoom_start=12):
     """
     Plot a geopandas on a folium map.
