@@ -1,13 +1,53 @@
 # bunch of functions to manage reference data
 
-def nodes_uuids(choice = "rm", rm = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/graphs/resource_models/Heritage%20Place.json", concept = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/reference_data/concepts/EAMENA.xml", output_file_path='C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/reference_data/concepts/concepts_readonly.tsv', export=True):
-	# Creates pandas dataframes from RM (JSON files) and Concepts (XML files)
+#%%
+
+import requests
+import json
+import pandas as pd
+
+rm = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/graphs/resource_models/Heritage%20Place.json"
+response = requests.get(rm)
+rm_data = json.loads(response.text)
+# Collect nodes' names and UUIDs from resource models
+df_nodes = pd.DataFrame(columns=['level3', 'uuid'])
+df_nodes = df_nodes.rename(columns={'level3': 'db.concept.name', 'uuid': 'db.concept.uuid'})
+for i in range(1, len(rm_data['graph'][0]['nodes'])):
+	new_row = [rm_data['graph'][0]['nodes'][i]['name'], rm_data['graph'][0]['nodes'][i]['nodeid']]
+# if not export:
+	df_nodes.loc[i] = new_row
+
+#%%
+# def mapping_file_
+
+# import json
+
+# mapping_ir = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/mapping_files/Information Resource.mapping"
+
+# with open(mapping, 'r') as file:
+#     # Step 3: Load the JSON data into a Python object
+#     data = json.load(file)
+
+
+
+#%% 
+# bunch of functions to manage reference data
+
+def nodes_uuids(choice = "rm", rm = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/graphs/resource_models/Heritage%20Place.json", concept = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/reference_data/concepts/EAMENA.xml", mapping = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/mapping_files/Information Resource.mapping", output_file_path='C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/reference_data/concepts/concepts_readonly.tsv', export=False, verbose=True):
+	# Creates pandas dataframes from RM (JSON files), Concepts (XML files) and mapping files (.mapping)
 	import requests
 	import json
 	import pandas as pd
 	from lxml import etree
+	if choice == "mp":
+		if verbose:
+			print("*Read Mapping file")
+		with open(mapping, 'r') as file:
+			map_data = json.load(file)
+		return(map_data)
 	if choice == "rm":
-		print("*Read Resource Models")
+		if verbose:
+			print("*Read Resource Models (RM)")
 		response = requests.get(rm)
 		rm_data = json.loads(response.text)
 		# Collect nodes' names and UUIDs from resource models
@@ -15,11 +55,12 @@ def nodes_uuids(choice = "rm", rm = "https://raw.githubusercontent.com/eamena-pr
 		df_nodes = df_nodes.rename(columns={'level3': 'db.concept.name', 'uuid': 'db.concept.uuid'})
 		for i in range(1, len(rm_data['graph'][0]['nodes'])):
 			new_row = [rm_data['graph'][0]['nodes'][i]['name'], rm_data['graph'][0]['nodes'][i]['nodeid']]
-		if not export:
+		# if not export:
 			df_nodes.loc[i] = new_row
 		return(df_nodes)
 	if choice == "concept":
-		print("*Read Concepts")
+		if verbose:
+			print("*Read Concepts")
 		response = requests.get(concept)
 		root = etree.fromstring(response.content)
 		id_value_pairs_corrected = []
@@ -35,10 +76,20 @@ def nodes_uuids(choice = "rm", rm = "https://raw.githubusercontent.com/eamena-pr
 		df = pd.DataFrame(id_value_pairs_corrected, columns=['parent_uuid', 'parent_concept', 'uuid', 'concept'])
 		if export:
 			df.to_csv(output_file_path, sep='\t', index=False)
-			print("The TSV of Concepts has been created.")
+			if verbose:
+				print("The TSV of Concepts has been created.")
 		else:
+			if verbose:
+				print("Return the dataframe")
 			return df
 
+# df_nodes = nodes_uuids(choice = "rm")
+# outDir = 'C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/reference_data/rm/hp/'
+# file_path = outDir + "hp-uuids.csv"
+# # df_nodes.to_csv(file_path, sep='\t', index=False)
+# df_nodes.to_csv(file_path, index=False)
+
+#%%
 
 def hp_mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/rm/hp/mds/mds-template-readonly.tsv"):
 	"""
@@ -187,7 +238,8 @@ def hp_filter_dataframe(hps, selected_hp, selected_value):
 
 def filter_hp_by_gs(hps, selected_hp):
 
-	# NB: doesnot work when imported into Jupyter NB, so refer to the function in the Jupyter NB
+	# NB: does not work when imported into Jupyter NB, so refer to the function in the Jupyter NB
+	# cf. widgets
 
 	"""
 	Filter a dataframe giving a selected value coming from a radio button
