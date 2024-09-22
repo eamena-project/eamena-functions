@@ -33,7 +33,7 @@ def img_fetch(url, label, uuid, number, new_width=300):
 	
 	return new_img
 
-def img_grid(df = None, cases_img_path = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference-data/concepts/heritage_places/cases/img/", width = 300, num_columns = 3, padding = 3):
+def img_grid(df = None, cases_img_path = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/concepts/hp/cases/img/", width = 300, num_columns = 3, padding = 3):
 	"""
 	Create an image grid of n columns gathering photographs illustrating EAMEAN concepts (ex: Threat type = Vandalism)
 
