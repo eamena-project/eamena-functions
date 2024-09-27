@@ -18,23 +18,48 @@ for i in range(1, len(rm_data['graph'][0]['nodes'])):
 	df_nodes.loc[i] = new_row
 
 #%%
-# def mapping_file_
 
-# import json
+def gh_create_issues(token_file = None, repo = 'eamena-project/eamena-arches-dev', new_issues = None, issue_titles = 'issue_titles', issue_descriptions = 'issue_descriptions', verbose=True):
+	"""
+	Batch the creation of several GitHub issues. The GitHub token is in the TXT file 'token_file'. Uses the the CSV file 'new_issues' that list all the new issues to create. The title of these issues is in the column 'issue_titles', their description is in the column 'issue_description'
 
-# mapping_ir = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/mapping_files/Information Resource.mapping"
+	:param token_file: A TXT file where the token is recorded, see GitHub documentation: https://github.com/settings/tokens
+	:param new_issues: A CSV file having the columns 'issue_titles' and 'issue_description'
+	:param verbose: Verbose
 
-# with open(mapping, 'r') as file:
-#     # Step 3: Load the JSON data into a Python object
-#     data = json.load(file)
+	:return: new GitHub issues 
 
-
-def create_github_issues(token = None, repo = "eamena-project/eamena-arches-dev", issue_titles = ['test_issue'], body = "test_issue_description"):
+	:Example:
+	>> # Not Run
+	>> gh_create_issues(token_file='C:/Rprojects/eamena-arches-dev/credentials/gh_token.txt', new_issues='https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/refs/heads/main/dbs/database.eamena/data/bulk_data/doc/bulk-upload-issue-threads.csv')
+	"""
 	from github import Github
+	import pandas as pd
+
+	if verbose:
+		print("Read the file where the GitHub token is recorded")
+	with open(token_file, 'r') as file:
+		token = file.readline().strip()
+	# if verbose:
+	# 	print(first_line)
+
 	g = Github(token)
 	repo = g.get_repo(repo)
-	for title in issue_titles:
-		repo.create_issue(title=title, body="Description of the issue")
+	if verbose:
+		print("Read the CSV file where the new issues (issues to create) are recorded")
+	df = pd.read_csv(new_issues)
+	# for index, row in df[1:].iterrows():
+	for index, row in df[1:].iterrows():
+		# if index == 1:
+		# 	break
+		title=row[issue_titles]
+		description=row[issue_descriptions]
+		print(f"{index} - {title}: {description}")
+		repo.create_issue(title=title, body=description)
+	# for title in issue_titles:
+		# repo.create_issue(title=title, body=description)
+		if verbose:
+			print(f"Issue '{title}' has been created")
 
 
 #%% 
