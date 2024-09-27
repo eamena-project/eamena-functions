@@ -29,6 +29,13 @@ for i in range(1, len(rm_data['graph'][0]['nodes'])):
 #     data = json.load(file)
 
 
+def create_github_issues(token = None, repo = "eamena-project/eamena-arches-dev", issue_titles = ['test_issue'], body = "test_issue_description"):
+	from github import Github
+	g = Github(token)
+	repo = g.get_repo(repo)
+	for title in issue_titles:
+		repo.create_issue(title=title, body="Description of the issue")
+
 
 #%% 
 # bunch of functions to manage reference data
