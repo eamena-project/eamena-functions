@@ -12,9 +12,9 @@
 
 #### UUIDs
 
-Run the Python function [nodes_uuids()](https://github.com/eamena-project/eamena-functions/blob/main/reference_data.py) on a RM (JSON) or a file of concepts (XML) to collect the UUIDs of the nodes
+Run the Python function [nodes_uuids()](https://github.com/eamena-project/eamena-functions/blob/main/reference_data.py) on a **RM** (JSON) or a file of **concepts** (XML) to collect the UUIDs of the nodes
 
-* For RM (example)
+* **RM** (example)
 
 ```Python
 df_nodes = nodes_uuids(choice = "rm", rm = "https://raw.githubusercontent.com/eamena-project/eamena/master/eamena/pkg/graphs/resource_models/Heritage%20Place.json")
@@ -23,7 +23,7 @@ df_nodes.to_csv(file_path, sep=',', index=False)
 ```
 Gives this [ids_temp.csv](https://github.com/eamena-project/eamenaR/blob/main/inst/extdata/ids_temp.csv) file. Such a mapping table can be used in the [eamenaR package](https://github.com/eamena-project/eamenaR?tab=readme-ov-file#uuids-of-the-nodes)
 
-* For concepts (example)
+* **concepts** (example)
  
 ```Python
 nodes_uuids(choice = "concept")

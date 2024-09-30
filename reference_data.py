@@ -19,6 +19,40 @@ for i in range(1, len(rm_data['graph'][0]['nodes'])):
 
 #%%
 
+def gh_append_messages(token_file = None, repo = 'eamena-project/eamena-arches-dev', issues_list = None, comment_message = None, verbose=True):
+	"""
+	Append a message to a GitHub issue
+
+	:param issues_list: A tuple with the number of the first issue and the number of the latest (a sequence).
+	:param comment_message: The message to add.
+	:param verbose: Verbose
+
+	:Example:
+	>> gh_append_messages(token_file='C:/Rprojects/eamena-arches-dev/credentials/gh_token.txt', issues_list = (59, 157), comment_message = "see expected field values: [dbs/database.eamena/data/reference_data/rm/hp/values](https://github.com/eamena-project/eamena-arches-dev/tree/main/dbs/database.eamena/data/reference_data/rm/hp/values#readme)")
+	"""
+	from github import Github
+
+	if verbose:
+		print("Read the file where the GitHub token is recorded")
+	with open(token_file, 'r') as file:
+		token = file.readline().strip()
+	g = Github(token)
+	repo = g.get_repo(repo)
+	# Posting the comment on each issue from #59 to #156
+	ct = 0
+	for issue_number in range(issues_list[0], issues_list[1]):  # 157 is exclusive, so it stops at 156
+		ct = ct + 1
+		issue = repo.get_issue(number=issue_number)
+		issue.create_comment(comment_message)
+		if verbose:
+			print(f"Comment posted on issue #{issue_number}")
+
+	print("All comments posted.")
+
+
+#%%
+
+
 def gh_create_issues(token_file = None, repo = 'eamena-project/eamena-arches-dev', new_issues = None, issue_titles = 'issue_titles', issue_descriptions = 'issue_descriptions', verbose=True):
 	"""
 	Batch the creation of several GitHub issues. The GitHub token is in the TXT file 'token_file'. Uses the the CSV file 'new_issues' that list all the new issues to create. The title of these issues is in the column 'issue_titles', their description is in the column 'issue_description'
