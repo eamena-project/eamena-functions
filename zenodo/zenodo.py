@@ -224,15 +224,31 @@ def zenodo_map(data = None):
 
     :return: A simple distribution map
     """
+    import geopandas as gpd
+    import matplotlib.pyplot as plt
+    import contextily as ctx
+    import pyproj
+    from matplotlib_scalebar.scalebar import ScaleBar
 
-# #%% test
-# import requests
-
-# GEOJSON_URL = "https://database.eamena.org/api/search/export_results?paging-filter=1&tiles=true&format=geojson&reportlink=false&precision=6&language=*&total=1641&resource-type-filter=%5B%7B%22graphid%22%3A%2234cfe98e-c2c0-11ea-9026-02e7594ce0a0%22%2C%22name%22%3A%22Heritage%20Place%22%2C%22inverted%22%3Afalse%7D%5D&map-filter=%7B%22type%22%3A%22FeatureCollection%22%2C%22features%22%3A%5B%7B%22type%22%3A%22Feature%22%2C%22properties%22%3A%7B%22Grid%20ID%22%3A%22E60N30-24%22%2C%22buffer%22%3A%7B%22width%22%3A%220%22%2C%22unit%22%3A%22m%22%7D%2C%22inverted%22%3Afalse%7D%2C%22geometry%22%3A%7B%22type%22%3A%22Polygon%22%2C%22coordinates%22%3A%5B%5B%5B60.5%2C31.25%5D%2C%5B60.5%2C31.5%5D%2C%5B60.75%2C31.5%5D%2C%5B61%2C31.5%5D%2C%5B61.25%2C31.5%5D%2C%5B61.5%2C31.5%5D%2C%5B61.75%2C31.5%5D%2C%5B62%2C31.5%5D%2C%5B62%2C31.25%5D%2C%5B62.25%2C31.25%5D%2C%5B62.25%2C31%5D%2C%5B62.25%2C30.75%5D%2C%5B62%2C30.75%5D%2C%5B62%2C30.5%5D%2C%5B61.75%2C30.5%5D%2C%5B61.5%2C30.5%5D%2C%5B61.5%2C30.25%5D%2C%5B61.25%2C30.25%5D%2C%5B61%2C30.25%5D%2C%5B60.75%2C30.25%5D%2C%5B60.75%2C30.5%5D%2C%5B60.75%2C30.75%5D%2C%5B61%2C30.75%5D%2C%5B61%2C31%5D%2C%5B60.75%2C31%5D%2C%5B60.75%2C31.25%5D%2C%5B60.5%2C31.25%5D%5D%5D%7D%7D%5D%7D"
-# resp = requests.get(GEOJSON_URL)
-# data = resp.json()
-
-# #%% test
+    gdf = gpd.GeoDataFrame.from_features(data['features'])
+    gdf = gdf.set_crs('epsg:4326')
+    gdf = gdf.to_crs(epsg=3857)
+    fig, ax = plt.subplots(figsize=(10, 10))
+    gdf.plot(ax=ax, alpha=0.5, edgecolor='k')
+    ctx.add_basemap(ax, source=ctx.providers.Esri.WorldTopoMap)
+    transformer = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, pos: f'{transformer.transform(x, 0)[0]:.2f}°'))  # For longitude
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, pos: f'{transformer.transform(0, y)[1]:.2f}°'))  # For latitude
+    ax.tick_params(axis='both', which='major', labelsize=10)
+    # scale bar + north arrow
+    scalebar = ScaleBar(dx=1, units="m", dimension="si-length", location="lower right", scale_loc="bottom")
+    ax.add_artist(scalebar)
+    ax.annotate('N', xy=(0.95, 0.95), xytext=(0.95, 0.9),
+                arrowprops=dict(facecolor='black', shrink=0.05, width=2, headwidth=10),
+                ha='center', va='center', fontsize=20, xycoords='axes fraction')
+    plt.title(f"Distribution map of {len(gdf)} Heritage Places", fontsize=14)
+    plt.show()
+    # plt.savefig('my_map.png', dpi=300)
 
 
 
