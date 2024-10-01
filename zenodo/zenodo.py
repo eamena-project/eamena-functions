@@ -156,6 +156,27 @@ def zenodo_statistics(data = None):
     LIST_HPS.append(HPS_GEOM_NB_TOTAL)
     return(LIST_HPS)
 
+def duplicate_remove(data = None, field_id = 'EAMENA ID'):
+    """
+    Remove duplicates on a specific field
+
+    :param data: dictionary of Heritage Places (JSON)
+    :param field_id: the field on which the duplicated will be counted, default 'EAMENA ID' (HP)
+
+    :return: A dictionnary of features (only)
+
+    :Example:
+    >>> data_points['features'] = duplicate_remove(data_points)
+    """
+    seen_eamena_ids = set()
+    filtered_features = []
+    for feature in data['features']:
+        eamena_id = feature['properties'].get(field_id)
+        if eamena_id not in seen_eamena_ids:
+            filtered_features.append(feature)
+            seen_eamena_ids.add(eamena_id)
+    return(filtered_features)
+
 def geometry_types(data = None):
     """
     List all geometry types coming of an HP dataset.
@@ -179,6 +200,8 @@ def geometry_to_centroid(data = None):
 
     :return: A dictionary of Heritage Places (JSON) with only Point geometries.
     
+    :Example:
+    >>> data_points = geometry_to_centroid(data_points)
     """
     from shapely.geometry import shape
 
