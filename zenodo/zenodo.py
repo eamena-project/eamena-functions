@@ -131,9 +131,12 @@ def zenodo_related_identifiers(site = 'https://zenodo.org/oai2d', set = 'user-ea
 
 def zenodo_statistics(data = None):
     """
-    Calculate basic statistics on HPs. Return a list with: the total number of Heritage Places; the number of Heritage Places layered by number of geometries (some have 1, 2, 3, ...); the total number of geometries; etc.
+    Calculate basic statistics on HPs.
 
     :param data: dictionary of Heritage Places (JSON)
+
+    :return: A list with: the total number of Heritage Places; the number of Heritage Places layered by number of geometries (some have 1, 2, 3, ...); the total number of geometries; etc.
+
     """
     from collections import Counter
 
@@ -153,6 +156,51 @@ def zenodo_statistics(data = None):
     LIST_HPS.append(HPS_GEOM_NB_TOTAL)
     return(LIST_HPS)
 
+def geometry_types(data = None):
+    """
+    List all geometry types coming of an HP dataset.
+
+    :param data: dictionary of Heritage Places (JSON)
+
+    :return: Existing geometries (Points, LineStrings, etc.) in a list
+    """
+    unique_geometry_types = set()
+    for feature in data['features']:
+        geometry_type = feature['geometry']['type']
+        unique_geometry_types.add(geometry_type)
+    unique_geometry_types = sorted(unique_geometry_types)
+    return(unique_geometry_types)
+
+def geometry_to_centroid(data = None):
+    """
+    Converts Polygon, Line and Multi geometries to Point geometries.
+
+    :param data: dictionary of Heritage Places (JSON)
+
+    :return: A dictionary of Heritage Places (JSON) with only Point geometries.
+    
+    """
+    from shapely.geometry import shape
+
+    for feature in data['features']:
+        geometry = feature['geometry']
+        geom = shape(geometry)
+        if geom.geom_type in ['Polygon', 'LineString', 'MultiLineString', 'MultiPolygon', 'MultiPoint']:
+            centroid = geom.centroid  # Get the centroid
+            feature['geometry'] = {
+                'type': 'Point',
+                'coordinates': (centroid.x, centroid.y)
+            }
+    return data
+
+def zenodo_map(data = None):
+    """
+    Calculate basic statistics on HPs.
+
+    :param data: dictionary of Heritage Places (JSON)
+
+    :return: A simple distribution map
+    """
 
 # #%% test
 # import requests
