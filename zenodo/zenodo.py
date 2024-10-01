@@ -218,7 +218,7 @@ def geometry_to_centroid(data = None):
 
 def zenodo_map(data = None):
     """
-    Calculate basic statistics on HPs.
+    Create a distribution map of HPs.
 
     :param data: dictionary of Heritage Places (JSON)
 
