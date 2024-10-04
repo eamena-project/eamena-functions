@@ -76,15 +76,15 @@ def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/d
 
 	return dfs_bu_append, df_r2r_po, df_r2r_ir
 
-dfs_bu_append, df_r2r_po, df_r2r_ir = filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_BU_Append_Aug24_v5 (1).csv")
-# df_bu_append.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_bu_append_new.csv", index=False)
-df_r2r_po.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_r2r_po_1.csv", index=False)
-df_r2r_ir.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_r2r_ir_1.csv", index=False)
+# dfs_bu_append, df_r2r_po, df_r2r_ir = filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_BU_Append_Aug24_v5 (1).csv")
+# # df_bu_append.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_bu_append_new.csv", index=False)
+# df_r2r_po.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_r2r_po_1.csv", index=False)
+# df_r2r_ir.to_csv("C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_r2r_ir_1.csv", index=False)
 
-for i, df_bu_append in enumerate(dfs_bu_append, 1):
-		# print(f"DataFrame {i}:\n{df_bu_append.head(3)}\n")
-		name_out = f"C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_bu_{i}.csv"
-		df_bu_append.to_csv(name_out, index=False)
+# for i, df_bu_append in enumerate(dfs_bu_append, 1):
+# 		# print(f"DataFrame {i}:\n{df_bu_append.head(3)}\n")
+# 		name_out = f"C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_data_append_bu_{i}.csv"
+# 		df_bu_append.to_csv(name_out, index=False)
 
 #%%
 
