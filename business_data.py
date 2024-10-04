@@ -139,6 +139,25 @@ def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/d
 # for i, df in enumerate(dfs, 1):
 # 		print(f"DataFrame {i}:\n{df}\n")
 
+#%%
+def hps_list(hps = None):
+	"""
+	Store the EAMENA ID in a list 
+
+	:param hps: a dict() coming from reading of a JSON (GeoJSON). See the function `db_query()`
+
+	:return: A list of EAMENA IDs
+
+	:Example: 
+	>> GEOJSON_URL = "https://database.eamena.org/api/search/..."
+	>> hps = mds.db_query(GEOJSON_URL)
+	>> selected_hp = mds.hps_list(hps)
+
+	"""
+	selected_hp = []
+	for i in range(len(hps['features'])):
+		selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
+	return(selected_hp)
 
 #%%
 def db_query(geojson_url = None, to_df = False, verbose = True):
