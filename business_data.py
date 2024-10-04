@@ -140,7 +140,7 @@ def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/d
 # 		print(f"DataFrame {i}:\n{df}\n")
 
 #%%
-def hps_list(hps = None):
+def hp_list(hps = None):
 	"""
 	Store the EAMENA ID in a list 
 
