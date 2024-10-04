@@ -88,18 +88,18 @@ def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/d
 
 #%%
 
-import pandas as pd
-from io import StringIO
+# import pandas as pd
+# from io import StringIO
 
-# Use StringIO to simulate reading from a file
-# df = pd.read_csv(StringIO(data))
+# # Use StringIO to simulate reading from a file
+# # df = pd.read_csv(StringIO(data))
 
-# Dictionary to hold the dataframes
-dfs = {}
+# # Dictionary to hold the dataframes
+# dfs = {}
 
-# Split the dataframe based on 'ResourceID'
-for idx, group in df_bu_append.groupby('ResourceID'):
-		dfs[idx] = group
+# # Split the dataframe based on 'ResourceID'
+# for idx, group in df_bu_append.groupby('ResourceID'):
+# 		dfs[idx] = group
 
 # Now `dfs` dictionary contains separate dataframes for each unique 'ResourceID'
 # You can access each dataframe using its 'ResourceID' as the key, like dfs['59e0f074-cbdc-4c7a-8c06-c791b6d898b3']
@@ -107,37 +107,37 @@ for idx, group in df_bu_append.groupby('ResourceID'):
 
 # df_bu_append['ResourceID'].value_counts().max()
 
-data = """
-ResourceID,Investigator Role Type
-59e0f074-cbdc-4c7a-8c06-c791b6d898b3,EAMENA Project Staff
-59e0f074-cbdc-4c7a-8c06-c791b6d898b3,Academic Researcher
-59e0f074-cbdc-4c7a-8c06-c791b6d898b3,Site Manager
-12345678-cbdc-4c7a-8c06-c791b6d898b3,Field Technician
-12345678-cbdc-4c7a-8c06-c791b6d898b3,Site Manager
-38e0f999-cbdc-4c7a-8c06-c791b6d898b3,EAMENA Project Staff
-"""
+# data = """
+# ResourceID,Investigator Role Type
+# 59e0f074-cbdc-4c7a-8c06-c791b6d898b3,EAMENA Project Staff
+# 59e0f074-cbdc-4c7a-8c06-c791b6d898b3,Academic Researcher
+# 59e0f074-cbdc-4c7a-8c06-c791b6d898b3,Site Manager
+# 12345678-cbdc-4c7a-8c06-c791b6d898b3,Field Technician
+# 12345678-cbdc-4c7a-8c06-c791b6d898b3,Site Manager
+# 38e0f999-cbdc-4c7a-8c06-c791b6d898b3,EAMENA Project Staff
+# """
 
-# Read data into DataFrame
-df = pd.read_csv(StringIO(data))
+# # Read data into DataFrame
+# df = pd.read_csv(StringIO(data))
 
-# Find out how many duplicates at most for a single ResourceID
-max_duplicates = df_bu_append['ResourceID'].value_counts().max()
+# # Find out how many duplicates at most for a single ResourceID
+# max_duplicates = df_bu_append['ResourceID'].value_counts().max()
 
-# Create empty list to store the DataFrames
-dfs = []
+# # Create empty list to store the DataFrames
+# dfs = []
 
-# Create DataFrames such that no ResourceID is duplicated within each DataFrame
-for i in range(max_duplicates):
-		# Take one of each duplicate at each iteration and drop them from the DataFrame
-		df_temp = df_bu_append.drop_duplicates(subset='ResourceID', keep='first')
-		dfs.append(df_temp)
-		# Drop the used entries for the next iteration
-		df_bu_append = df_bu_append.drop(df_temp.index)
+# # Create DataFrames such that no ResourceID is duplicated within each DataFrame
+# for i in range(max_duplicates):
+# 		# Take one of each duplicate at each iteration and drop them from the DataFrame
+# 		df_temp = df_bu_append.drop_duplicates(subset='ResourceID', keep='first')
+# 		dfs.append(df_temp)
+# 		# Drop the used entries for the next iteration
+# 		df_bu_append = df_bu_append.drop(df_temp.index)
 
-# You now have DataFrames in the list `dfs` where each DataFrame has unique 'ResourceID' values
-# Print the DataFrames to verify
-for i, df in enumerate(dfs, 1):
-		print(f"DataFrame {i}:\n{df}\n")
+# # You now have DataFrames in the list `dfs` where each DataFrame has unique 'ResourceID' values
+# # Print the DataFrames to verify
+# for i, df in enumerate(dfs, 1):
+# 		print(f"DataFrame {i}:\n{df}\n")
 
 
 #%%
