@@ -174,7 +174,7 @@ def hp_mds_template(tsv_file = "https://raw.githubusercontent.com/eamena-project
 	# 	print(df_listed.to_markdown())
 	return(df_listed)
 
-def hp_mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/rm/hp/mds/mds-template-readonly.tsv", radio_button = None):
+def hp_mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/rm/hp/mds/mds-template-readonly.tsv", radio_button = None, verbose=False):
 	"""
 	Dataframe of mds individual or aggregated fields
 
@@ -193,14 +193,17 @@ def hp_mds_template_levels(tsv_file = "https://raw.githubusercontent.com/eamena-
 		mylevel = 'level3'
 	df_listed = hp_mds_template(tsv_file)
 	df_mds = df_listed.copy()
+	colors = df_mds['color'].tolist()
 	df_mds['Enhanced record minimum standard'] = df_mds['Enhanced record minimum standard'].str.contains(r'Yes', case = False, na = False, regex = True).astype(int)
 	df_mds = df_mds[[mylevel, "Enhanced record minimum standard"]]
 	df_mds.columns.values[0] = "field"
 	df_mds = df_mds.groupby(['field'])['Enhanced record minimum standard'].sum()
-	print(f'You selected: {mylevel}')
+	if(verbose):
+		print(f'You selected: {mylevel}')
 	df_mds = pd.DataFrame({
 		'field': df_mds.index,
-		'value' : df_mds.values
+		'value' : df_mds.values,
+		'color' : colors
 					})
 	# print(df_mds.to_markdown(index=False))
 	return(df_mds)
@@ -267,7 +270,7 @@ def hp_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3"
 				if verbose:
 					print(" /!\ '" + a_field + "' listed in the mds dataframe is a level1 or level2 value, but is not a field listed in the database")
 				a_value = None
-			if a_value is not None:
+			if a_value is not None and a_value != "":
 				# row_num = df_res[df_res['field'] == df_field].index.tolist()
 				df_res.at[j, 'recorded'] = df_res.loc[j]['recorded'] + 1
 		l_mds.append(df_res)
