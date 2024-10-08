@@ -256,10 +256,12 @@ def hp_dict(hps = None, selected_hp = None, df_listed = None, mylevel = "level3"
 		if verbose:
 			print("read: " + a_hp)
 		# create an empty df
-		color = df_listed['color'].to_list()
+		# color = df_listed['color'].to_list()
+		# df_res = pd.DataFrame({'field': level_values, 
+        #                  'recorded': np.repeat(0, len(level_values)).tolist(),
+        #                  'color': color})
 		df_res = pd.DataFrame({'field': level_values, 
-                         'recorded': np.repeat(0, len(level_values)).tolist(),
-                         'color': color})
+                         'recorded': np.repeat(0, len(level_values)).tolist()})
 		# len(df_res)
 		for j in range(len(df_res)):
 			a_field = df_res.iloc[j]["field"]
