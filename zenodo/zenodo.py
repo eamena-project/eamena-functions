@@ -216,9 +216,74 @@ def geometry_to_centroid(data = None):
 			}
 	return data
 
+def zenodo_statistics_hp(data = None, stats = ['pie_on_conditions', 'hist_on_functions']):
+	"""
+	Create a various plots and charts on HPs values.
+
+	:param data: dictionary of Heritage Places (JSON)
+	:param stats: the different charts that will be created: 'pie_on_conditions' stands for 'Overall Condition State Type', 'hist_on_functions' stands for ...
+
+	:return: Charts
+	"""
+	import matplotlib.pyplot as plt
+	from collections import Counter
+
+	  # avoid duplicated geometries
+	data['features'] = duplicate_remove(data)
+
+	if('pie_on_conditions' in stats):
+		field_is = 'Overall Condition State Type'
+		lconditions = list()
+		ct = 0
+		for i in range(len(data['features'])):
+			ct = ct + 1
+			lconditions.append(data['features'][i]['properties'][field_is])
+		# split when there are several values for 1 HP
+		lconditions = [item for sublist in [x.split(', ') for x in lconditions] for item in sublist]
+		condition_counts = Counter(lconditions)
+		labels = list(condition_counts.keys())
+		sizes = list(condition_counts.values())
+		colors = plt.cm.Pastel1(range(len(labels)))  # Using a colormap for the pie chart colors
+		def absolute_value(val):
+			total = sum(sizes)
+			percent = int(round(val/100.*total))
+			return f"{percent:d}"
+		plt.figure(figsize=(5, 5)) 
+		plt.pie(sizes, labels=labels, autopct=absolute_value, startangle=90, colors=colors)
+		plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+		plt.title(f"Distribution of {ct} Heritage Places' {field_is}")
+		plt.show()
+	if('hist_on_functions' in stats):
+		field_is = 'Heritage Place Function'
+		lfunctions = list()
+		ct = 0
+		for i in range(len(data['features'])):
+			ct = ct + 1
+			lfunctions.append(data['features'][i]['properties'][field_is])
+		# split when there are several values for 1 HP
+		lfunctions = [item for sublist in [x.split(', ') for x in lfunctions] for item in sublist]
+		function_counts = Counter(lfunctions)
+		sorted_functions = sorted(function_counts.items(), key=lambda x: x[1], reverse=True)
+		labels, values = zip(*sorted_functions)
+		# chart size depends on nb of values
+		if len(labels) < 6:
+			width,height = (5, 6)
+		elif len(labels) > 6 and len(labels) < 12:
+			width,height = (10, 6)
+		else:
+			width,height = (15, 6)
+		plt.figure(figsize=(width,height))
+		plt.bar(labels, values, color='skyblue')
+		plt.xlabel(field_is)
+		plt.ylabel('Counts')
+		plt.title(f"Distribution of {ct} Heritage Places' {field_is}")
+		plt.xticks(rotation=45)
+		plt.show()
+
+
 def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/", grid_contour_url = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/grids/EAMENA_Grid_contour.geojson", label='Heritage Places', edgecolor='black', linewidth=1):
   """
-  Create a distribution map of HPs.
+  Create a distribution maps of HPs at different levels: extent of the HPs (local), HPs within their national boundaries (national), HPs within the EAMENA geographical extent. Previously, remove duplicated geometries.
 
   :param data: dictionary of Heritage Places (JSON)
   :param levels: the different scale on which the maps will be created. 1: local, HP locations within their minimum bound rectangle; 2: national, HP locations within the countr-y-ies; 3: HP locations within the EAMENA project geographic scope
