@@ -216,13 +216,14 @@ def geometry_to_centroid(data = None):
 			}
 	return data
 
-def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/"):
+def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/", grid_contour_url = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/grids/EAMENA_Grid_contour.geojson", label='Heritage Places', edgecolor='black', linewidth=1):
   """
   Create a distribution map of HPs.
 
   :param data: dictionary of Heritage Places (JSON)
   :param levels: the different scale on which the maps will be created. 1: local, HP locations within their minimum bound rectangle; 2: national, HP locations within the countr-y-ies; 3: HP locations within the EAMENA project geographic scope
   :param country_base_url: the root path of the folder hosting EAMENA's countries GeoJSON files, for example: Egypt = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/Egypt.geojson"
+  :param grid_contour_url: The contour of the geographical scope of EAMENA
 
   :return: A simple distribution map
   """
@@ -232,42 +233,36 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
   import pyproj
   from matplotlib_scalebar.scalebar import ScaleBar
 
-  # levels = [1, 2, 3]
+  # avoid duplicated geometries
+  data_points = geometry_to_centroid(data)
+  data_points['features'] = duplicate_remove(data_points)
 
-  # Load your data points
-  # data = data_points  # Assuming data_points is defined earlier in your code
-
-  # Create a GeoDataFrame from the data points
-  gdf = gpd.GeoDataFrame.from_features(data['features'])
+  gdf = gpd.GeoDataFrame.from_features(data_points['features']) # to df
   gdf = gdf.set_crs('epsg:4326')
   gdf = gdf.to_crs(epsg=3857)
 
   for level in levels:
     if level == 1:
-    # Plot the data points
-      fig, ax = plt.subplots(figsize=(10, 10))
-      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label='Heritage Places')
+      fig, ax = plt.subplots(figsize=(10, 10))	
+      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
     if level == 2:
-      fig, ax = plt.subplots(figsize=(10, 10))
-      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label='Heritage Places')
+      fig, ax = plt.subplots(figsize=(10, 10))	
+      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
       lcountries = set()
       for i in range(len(data['features'])):
         lcountries.add(data['features'][i]['properties']['Country Type'])
       for country in lcountries:
         country_url = country_base_url + country + ".geojson"      
-        gdf_country = gpd.read_file(country_url)  # Load Egypt GeoJSON
-        # gdf_libya = gpd.read_file(libya_url)   # Load Libya GeoJSON
+        gdf_country = gpd.read_file(country_url)  # Load the country GeoJSON
         gdf_country = gdf_country.set_crs('epsg:4326').to_crs(epsg=3857) 
-        gdf_country.plot(ax=ax, color='none', edgecolor='red', linewidth=2, label=country, linestyle='--')
-
+        gdf_country.plot(ax=ax, color='none', edgecolor=edgecolor, linewidth=linewidth, label=country)
     if level == 3:
       fig, ax = plt.subplots(figsize=(10, 10))
-      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label='Heritage Places')
+      gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
       # Load the EAMENA grid contour
-      grid_contour_url = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/grids/EAMENA_Grid_contour.geojson"
       gdf_grid = gpd.read_file(grid_contour_url)  # Load the GeoJSON as a GeoDataFrame
       gdf_grid = gdf_grid.set_crs('epsg:4326').to_crs(epsg=3857)  # Ensure the same CRS
-      gdf_grid.plot(ax=ax, color='none', edgecolor='blue', linewidth=1.5, label='Grid Contour')  # Adjust color and style as needed
+      gdf_grid.plot(ax=ax, color='none', edgecolor=edgecolor, linewidth=linewidth, label='Grid Contour')  # Adjust color and style as needed
 
     # Add a basemap
     ctx.add_basemap(ax, source=ctx.providers.Esri.WorldTopoMap)
