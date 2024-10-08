@@ -388,6 +388,7 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 	# mds.plot_spidergraphs(dict_hps, df_mds, mylevel = radio_button.value)
 	#
 	# ncol = 3
+	import copy
 	import math
 	import plotly.graph_objects as go
 	from plotly.subplots import make_subplots
@@ -396,43 +397,68 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}] * ncol] * nrow, subplot_titles=tuple(dict_hps.keys()))
 	df_mds_1 = df_mds.copy()  # to add +1 later
 	df_mds_1.loc[df_mds_1['value'] == 0, 'value'] = -1
+  # remove alpha values in the colors
+	df_mds_1['color'] = [element[:7] for element in df_mds_1['color']]
 	current_column, current_row = 1, 1
 	for a_hp in dict_hps.keys():
+    # loop over the HPs
 		df = dict_hps[a_hp]
+		df.loc[df['field'] == 'Geometric Place Expression', 'recorded'] = 1
+		df_merged = pd.merge(df_mds_1, df, on='field')
+		df_merged = df_merged.rename(columns={'value': 'is_mds', 'recorded': 'is_recorded'})
+		df_merged['match'] = df_merged['is_mds']
+		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'match'] = 0
+    # the marker shapes and sizes
+		df_merged['symbol'] = 'circle'
+		df_merged['size'] = 7
+		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'symbol'] = 'square'
+		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'size'] = 14
 		if verbose:
-			print(a_hp)
-			print(str(current_row) + " " + str(current_column))
+			print(f"Read {a_hp}")
+			# print(str(current_row) + " " + str(current_column))
 		if mylevel == 'level3':
-			# mds
+			# mds ####################################################################
+      # mds - line #############################################################
 			fig.add_trace(go.Scatterpolar(
 				name="  mds",
-				r=df_mds_1['value'],
+				# r=df_mds_1['value'],
+				# theta=df_mds_1['field'],
+    		r=df_merged['match'],
 				theta=df_mds_1['field'],
 				fill='toself',
-				fillcolor='red',
-				line_color='red',
+				fillcolor='lightgrey',
+				line_color='lightgrey',
 				hovertemplate="<br>".join([
 					"value: %{r}",
 					"field: %{theta}"]),
 				showlegend=False),
 				current_row, current_column)
+      # mds - point ############################################################
 			fig.add_trace(go.Scatterpolar(
-				r=df_mds_1['value'],
+				# r=df_mds_1['value'],
+        r=df_merged['match'],
 				theta=df_mds_1['field'],
 				mode='markers',
-				marker_color="red",
+				marker_color="lightgrey",
 				hovertemplate="<br>".join([
 					"value: %{r}",
 					"field: %{theta}"]),
 				name='Markers',  # Provide a name for the marker trace
 				showlegend=False,  # Show the legend for the marker trace
 			), current_row, current_column)
+      # hps - point ############################################################
 			fig.add_trace(go.Scatterpolar(
 				name=a_hp,
-				r=df['recorded'],
-				theta=df['field'],
+				# r=df['recorded'],
+				# theta=df['field'],
+				# mode='markers',
+				# marker_color="blue",
+    		r=df_merged['is_recorded'],
+				theta=df_merged['field'],
 				mode='markers',
-				marker_color="blue",
+        marker_color=df_merged['color'],
+        marker_size=df_merged['size'],
+        marker_symbol=df_merged['symbol'],
 				hovertemplate="<br>".join([
 					"value: %{r}",
 					"field: %{theta}"])
@@ -471,9 +497,11 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 		)
 	)
 	fig.update_layout(
+    paper_bgcolor='rgba(0,0,0,0)',  # Transparent background outside of the polar plots
+    plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
 	  autosize=False,
-	  width=(ncol*500),
-	  height=(nrow*300),
+	  width=(ncol*700),
+	  height=(nrow*500),
 	)
 	fig.show()
 
