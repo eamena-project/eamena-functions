@@ -394,6 +394,11 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 	from plotly.subplots import make_subplots
 
 	nrow = math.ceil(len(dict_hps.keys()) / ncol)
+
+	# TODO: change the sub_plot titles according to wether or not they are MDS compliant
+	# titles = [f"<span style='color: red;'>{hp}</span>" for hp in dict_hps.keys()]
+	# fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}] * ncol] * nrow, subplot_titles=titles)
+	######################################################################################
 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}] * ncol] * nrow, subplot_titles=tuple(dict_hps.keys()))
 	df_mds_1 = df_mds.copy()  # to add +1 later
 	df_mds_1.loc[df_mds_1['value'] == 0, 'value'] = -1
@@ -449,6 +454,7 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
       # hps - point ############################################################
 			fig.add_trace(go.Scatterpolar(
 				name=a_hp,
+				# name="a_hp",
 				# r=df['recorded'],
 				# theta=df['field'],
 				# mode='markers',
@@ -464,24 +470,12 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 					"field: %{theta}"])
 			),
 				current_row, current_column)
-		else:
-			fig.add_trace(go.Scatterpolar(
-				name=a_hp,
-				r=df['recorded'],
-				theta=df['field'],
-				mode='markers',
-				marker_color="blue",
-				hovertemplate="<br>".join([
-					"value: %{r}",
-					"field: %{theta}"]),
-				showlegend=False,
-				text="None"),
-				current_row, current_column)
 		current_column = current_column + 1
 		# end of line..
 		if current_column > ncol:
 			current_row = current_row + 1
 			current_column = 1
+
 
 	# Update polar settings for all subplots
 	fig.update_polars(
@@ -504,6 +498,131 @@ def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, v
 	  height=(nrow*500),
 	)
 	fig.show()
+
+# def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, verbose=False):
+# 	# show a spidergraph of MDS for a dictionary of HP
+# 	# a par here is only for Colab?
+# 	# exemple:
+# 	# dict_hps = mds.hps_dict(hps, selected_hp, df_listed, mylevel = radio_button.value)
+# 	# mds.plot_spidergraphs(dict_hps, df_mds, mylevel = radio_button.value)
+# 	#
+# 	# ncol = 3
+# 	import copy
+# 	import math
+# 	import plotly.graph_objects as go
+# 	from plotly.subplots import make_subplots
+
+# 	nrow = math.ceil(len(dict_hps.keys()) / ncol)
+# 	fig = make_subplots(rows=nrow, cols=ncol, specs=[[{'type': 'polar'}] * ncol] * nrow, subplot_titles=tuple(dict_hps.keys()))
+# 	df_mds_1 = df_mds.copy()  # to add +1 later
+# 	df_mds_1.loc[df_mds_1['value'] == 0, 'value'] = -1
+#   # remove alpha values in the colors
+# 	df_mds_1['color'] = [element[:7] for element in df_mds_1['color']]
+# 	current_column, current_row = 1, 1
+# 	for a_hp in dict_hps.keys():
+#     # loop over the HPs
+# 		df = dict_hps[a_hp]
+# 		df.loc[df['field'] == 'Geometric Place Expression', 'recorded'] = 1
+# 		df_merged = pd.merge(df_mds_1, df, on='field')
+# 		df_merged = df_merged.rename(columns={'value': 'is_mds', 'recorded': 'is_recorded'})
+# 		df_merged['match'] = df_merged['is_mds']
+# 		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'match'] = 0
+#     # the marker shapes and sizes
+# 		df_merged['symbol'] = 'circle'
+# 		df_merged['size'] = 7
+# 		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'symbol'] = 'square'
+# 		df_merged.loc[(df_merged['is_mds'] == 1) & (df_merged['is_recorded'] == 0), 'size'] = 14
+# 		if verbose:
+# 			print(f"Read {a_hp}")
+# 			# print(str(current_row) + " " + str(current_column))
+# 		if mylevel == 'level3':
+# 			# mds ####################################################################
+#       # mds - line #############################################################
+# 			fig.add_trace(go.Scatterpolar(
+# 				name="  mds",
+# 				# r=df_mds_1['value'],
+# 				# theta=df_mds_1['field'],
+#     		r=df_merged['match'],
+# 				theta=df_mds_1['field'],
+# 				fill='toself',
+# 				fillcolor='lightgrey',
+# 				line_color='lightgrey',
+# 				hovertemplate="<br>".join([
+# 					"value: %{r}",
+# 					"field: %{theta}"]),
+# 				showlegend=False),
+# 				current_row, current_column)
+#       # mds - point ############################################################
+# 			fig.add_trace(go.Scatterpolar(
+# 				# r=df_mds_1['value'],
+#         r=df_merged['match'],
+# 				theta=df_mds_1['field'],
+# 				mode='markers',
+# 				marker_color="lightgrey",
+# 				hovertemplate="<br>".join([
+# 					"value: %{r}",
+# 					"field: %{theta}"]),
+# 				name='Markers',  # Provide a name for the marker trace
+# 				showlegend=False,  # Show the legend for the marker trace
+# 			), current_row, current_column)
+#       # hps - point ############################################################
+# 			fig.add_trace(go.Scatterpolar(
+# 				name=a_hp,
+# 				# r=df['recorded'],
+# 				# theta=df['field'],
+# 				# mode='markers',
+# 				# marker_color="blue",
+#     		r=df_merged['is_recorded'],
+# 				theta=df_merged['field'],
+# 				mode='markers',
+#         marker_color=df_merged['color'],
+#         marker_size=df_merged['size'],
+#         marker_symbol=df_merged['symbol'],
+# 				hovertemplate="<br>".join([
+# 					"value: %{r}",
+# 					"field: %{theta}"])
+# 			),
+# 				current_row, current_column)
+# 		else:
+# 			fig.add_trace(go.Scatterpolar(
+# 				name=a_hp,
+# 				r=df['recorded'],
+# 				theta=df['field'],
+# 				mode='markers',
+# 				marker_color="blue",
+# 				hovertemplate="<br>".join([
+# 					"value: %{r}",
+# 					"field: %{theta}"]),
+# 				showlegend=False,
+# 				text="None"),
+# 				current_row, current_column)
+# 		current_column = current_column + 1
+# 		# end of line..
+# 		if current_column > ncol:
+# 			current_row = current_row + 1
+# 			current_column = 1
+
+# 	# Update polar settings for all subplots
+# 	fig.update_polars(
+# 		radialaxis=dict(
+# 			# showline=False,
+# 			range=[-1, 1],  # Set the range for the radial axis
+# 			tickvals=[0, 1],  # Specify the tick values
+# 			ticktext=['0', '1'],  # Specify the corresponding labels
+# 		),
+# 		angularaxis=dict(
+# 			showline=False,  # Set to False to hide the angular axis line
+# 			showticklabels=False,  # Set to False to hide the angular axis labels
+# 		)
+# 	)
+# 	fig.update_layout(
+#     paper_bgcolor='rgba(0,0,0,0)',  # Transparent background outside of the polar plots
+#     plot_bgcolor='rgba(0,0,0,0)',  # Transparent plot background
+# 	  autosize=False,
+# 	  width=(ncol*700),
+# 	  height=(nrow*500),
+# 	)
+# 	fig.show()
 
 def hp_concepts_cases_img(hp_cases_path = 'https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/concepts/hp/cases/'):
 	"""
