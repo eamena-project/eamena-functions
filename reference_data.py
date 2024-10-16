@@ -315,7 +315,7 @@ def filter_hp_by_gs(hps, selected_hp):
 	# cf. widgets
 
 	"""
-	Filter a dataframe giving a selected value coming from a radio button
+	Filter a dataframe giving a selected value coming from a radio button. Tested on Google Colab.
 
 	List all GS listed in the HP. Display a radio button to show these HP by GS. Display a radio button for the selection of the GS
 
