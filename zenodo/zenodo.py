@@ -306,21 +306,16 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
   gdf = gdf.set_crs('epsg:4326')
   gdf = gdf.to_crs(epsg=3857)
 
-  # Calculate the extent (bounding box) of the points
-  xmin, ymin, xmax, ymax = gdf.total_bounds
-
-	# Calculate a 10% buffer of the X and Y range
-  x_buffer = (xmax - xmin) * 0.10
-  y_buffer = (ymax - ymin) * 0.10
-
-	# Adjusted limits with buffer
-  xlim = (xmin - x_buffer, xmax + x_buffer)
-  ylim = (ymin - y_buffer, ymax + y_buffer)
-
   for level in levels:
     if level == 1:
       fig, ax = plt.subplots(figsize=(fig_size_width, fig_size_height))	
       gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
+	  # Calculate the extent (bounding box) of the points
+      xmin, ymin, xmax, ymax = gdf.total_bounds
+      x_buffer = (xmax - xmin) * 0.10 # 10% buffer of the X and Y range
+      y_buffer = (ymax - ymin) * 0.10
+      xlim = (xmin - x_buffer, xmax + x_buffer)
+      ylim = (ymin - y_buffer, ymax + y_buffer)
       ax.set_xlim(xlim)
       ax.set_ylim(ylim)
     if level == 2:
