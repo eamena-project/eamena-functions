@@ -281,7 +281,7 @@ def zenodo_statistics_hp(data = None, stats = ['pie_on_conditions', 'hist_on_fun
 		plt.show()
 
 
-def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/", grid_contour_url = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/grids/EAMENA_Grid_contour.geojson", label='Heritage Places', edgecolor='black', linewidth=1):
+def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.githubusercontent.com/eamena-project/eamena-data/main/reference_data/countries/", grid_contour_url = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/dbs/database.eamena/data/reference_data/grids/EAMENA_Grid_contour.geojson", label='Heritage Places', edgecolor='black', linewidth=1, fig_size_width=10, fig_size_height=10):
   """
   Create a distribution maps of HPs at different levels: extent of the HPs (local), HPs within their national boundaries (national), HPs within the EAMENA geographical extent. Previously, remove duplicated geometries.
 
@@ -306,12 +306,25 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
   gdf = gdf.set_crs('epsg:4326')
   gdf = gdf.to_crs(epsg=3857)
 
+  # Calculate the extent (bounding box) of the points
+  xmin, ymin, xmax, ymax = gdf.total_bounds
+
+	# Calculate a 10% buffer of the X and Y range
+  x_buffer = (xmax - xmin) * 0.10
+  y_buffer = (ymax - ymin) * 0.10
+
+	# Adjusted limits with buffer
+  xlim = (xmin - x_buffer, xmax + x_buffer)
+  ylim = (ymin - y_buffer, ymax + y_buffer)
+
   for level in levels:
     if level == 1:
-      fig, ax = plt.subplots(figsize=(10, 10))	
+      fig, ax = plt.subplots(figsize=(fig_size_width, fig_size_height))	
       gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
+      ax.set_xlim(xlim)
+      ax.set_ylim(ylim)
     if level == 2:
-      fig, ax = plt.subplots(figsize=(10, 10))	
+      fig, ax = plt.subplots(figsize=(fig_size_width, fig_size_height))	
       gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
       lcountries = set()
       for i in range(len(data['features'])):
@@ -322,7 +335,7 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
         gdf_country = gdf_country.set_crs('epsg:4326').to_crs(epsg=3857) 
         gdf_country.plot(ax=ax, color='none', edgecolor=edgecolor, linewidth=linewidth, label=country)
     if level == 3:
-      fig, ax = plt.subplots(figsize=(10, 10))
+      fig, ax = plt.subplots(figsize=(fig_size_width, fig_size_height))
       gdf.plot(ax=ax, alpha=0.5, edgecolor='k', label=label) # Plot the data points
       # Load the EAMENA grid contour
       gdf_grid = gpd.read_file(grid_contour_url)  # Load the GeoJSON as a GeoDataFrame
@@ -331,6 +344,7 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
 
     # Add a basemap
     ctx.add_basemap(ax, source=ctx.providers.Esri.WorldTopoMap)
+
     transformer = pyproj.Transformer.from_crs(3857, 4326, always_xy=True)
     ax.xaxis.set_major_formatter(plt.FuncFormatter(lambda x, pos: f'{transformer.transform(x, 0)[0]:.2f}°'))  # For longitude
     ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda y, pos: f'{transformer.transform(0, y)[1]:.2f}°'))  # For latitude
