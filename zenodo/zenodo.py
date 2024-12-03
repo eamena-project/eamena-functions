@@ -325,6 +325,8 @@ def zenodo_map(data = None, levels = [1, 2, 3], country_base_url = "https://raw.
       for i in range(len(data['features'])):
         lcountries.add(data['features'][i]['properties']['Country Type'])
       for country in lcountries:
+        if country == 'Palestine, State of':
+          country = 'Palestine'
         country_url = country_base_url + country + ".geojson"      
         gdf_country = gpd.read_file(country_url)  # Load the country GeoJSON
         gdf_country = gdf_country.set_crs('epsg:4326').to_crs(epsg=3857) 
