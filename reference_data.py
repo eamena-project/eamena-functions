@@ -380,7 +380,7 @@ def hp_subset_by_gs(hps, filtered_hp_gs):
 	# len(selected_hp_gs['features'])
 	return(selected_hp_gs)
 
-def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=3, verbose=False):
+def hp_plot_spidergraphs(dict_hps=None, df_mds=None, mylevel="level3", ncol=1, verbose=False):
 	# show a spidergraph of MDS for a dictionary of HP
 	# a par here is only for Colab?
 	# exemple:
