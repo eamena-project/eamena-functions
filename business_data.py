@@ -1,7 +1,5 @@
 # bunch of functions to manage business data
 
-
-#%%
 def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/Fazzan_BU_Append_Aug24_v5_rvTH.csv", uuid = 'ResourceID', r2r_fields = ['Assessment Investigator - Actor', 'Information Resource Used'], r2r_map_po = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/mapping_pers.csv", r2r_map_ir = "C:/Rprojects/eamena-arches-dev/dbs/database.eamena/data/bulk_data/db_data/mapping_ir.csv", verbose=True):
 	"""
 	Grab a tabular file having data used to update and append different resources (ex: HP), filter the data that need to be 'pushed' though the BU append procedure, and data that go into the resource 2 resource import. These two procedures (BU append and resource-to-resource) follow different Python processes, respectively 'import_business_data_relations' and 'import_business_data ... -ow append'.
@@ -187,7 +185,6 @@ def hp_list(hps = None):
 		selected_hp.append(hps['features'][i]['properties']['EAMENA ID'])
 	return(selected_hp)
 
-#%%
 def dbs_query(geojson_url = None, to_df = False, verbose = True):
 	"""
 	Return a JSON file (GeoJSON) from a GeoJSON URL
@@ -220,8 +217,6 @@ def dbs_query(geojson_url = None, to_df = False, verbose = True):
 		df.drop('geometry.coordinates', axis=1, inplace=True)
 		return(df)
 
-#%%
-
 def dbs_export_geojson(geojson_data, output_file_path = "output.geojson"):
 	# Save the GeoJSON data to a file
 	import json
@@ -229,7 +224,9 @@ def dbs_export_geojson(geojson_data, output_file_path = "output.geojson"):
 	with open(output_file_path, "w") as output_file:
 		json.dump(geojson_data, output_file, indent=2)
 
-def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65ebbb9cb656.json", verbose=True):
+#%%
+
+def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/credentials/gsheet-407918-65ebbb9cb656.json", verbose=True):
 	"""
 	Grids with 0 Heritage places. Read an XLSX hosted online and its different sheets. This XLSX gathers the names of Grid Squares (GS) that have been surveyed but have no (zero) HPs
 
@@ -267,9 +264,11 @@ def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65
 		})
 	return gs_with_0_hp
 
+#%%
+
 def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv',  verbose=True):
 	"""
-	Merge the counts of nb of HP by GS recorded in the EAMENA database (first ragument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
+	Merge the counts of nb of HP by GS recorded in the EAMENA database (first argument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
 
 	:param nb_hp_gs: A GeoJSON file
 	:param verbose: A CSV
@@ -279,7 +278,7 @@ def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojs
 
 	:Example:   
 
-	>>> updated_geo_df = nb_hp_by_gs()
+	>>> updated_geo_df = hp_by_gs_nb()
 	>>> updated_geo_df.to_file('C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids_including_0_hp.geojson', driver='GeoJSON')
 	 
 	 """
@@ -304,6 +303,9 @@ def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojs
 	return updated_geo_df
 	# Save the updated GeoDataFrame as GeoJSON
 
+hp_by_gs_nb(nb_hp_gs='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/gs_with_0_hp.csv',  verbose=True)
+
+#%%
 
 def gs_merge_info(geometries = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/EAMENA_Grid.geojson", uuids = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/data-1688403740400-1.csv"):
 	"""

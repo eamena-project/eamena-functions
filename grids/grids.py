@@ -3,9 +3,9 @@
 ## renamed, adapted and moved to https://github.com/eamena-project/eamena-functions/tree/main/business_data.py  ##
 ####################################################################################################################
 
-def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65ebbb9cb656.json", verbose=True):
+def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/credentials/gsheet-407918-65ebbb9cb656.json", verbose=True):
   """
-  Grids with 0 Heritage places. Read an XLSX hosted online and its different sheets. This XLSX gathers the names of Grid Squares (GS) that have been surveyed but have no (zero) HPs
+  Grids with 0 Heritage places. Read an XLSX hosted online (Google Sheet) and its different sheets. This XLSX gathers the names of Grid Squares (GS) that have been surveyed but have no (zero) HPs
 
   :param gkey: a key in a JSON file for the Google API platform
   :param verbose: verbose
@@ -15,7 +15,7 @@ def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65
   :Example:   
 
   >>> gs_0_hp = gs_with_0_hp()
-  >>> gs_0_hp.to_csv('C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv', index=False)
+  >>> gs_0_hp.to_csv('C:/Rprojects/eamena-data/working_data/db_data/gs_with_0_hp.csv', index=False)
   """
   import pandas as pd
   import gspread
@@ -41,9 +41,9 @@ def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/data/keys/gsheet-407918-65
     })
   return gs_with_0_hp
 
-def nb_hp_by_gs(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv',  verbose=True):
+def nb_hp_by_gs(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Rprojects/eamena-data/working_data/db_data/gs_with_0_hp.csv',  verbose=True):
   """
-  Merge the counts of nb of HP by GS recorded in the EAMENA database (first ragument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
+  Merge the counts of nb of HP by GS recorded in the EAMENA database (first argument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
 
   :param nb_hp_gs: A GeoJSON file
   :param verbose: A CSV
