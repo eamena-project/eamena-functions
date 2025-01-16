@@ -268,7 +268,7 @@ def gs_with_0_hp(gkey="C:/Rprojects/eamena-arches-dev/credentials/gsheet-407918-
 
 def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Users/Thomas Huet/Desktop/temp/gs_with_0_hp.csv',  verbose=True):
 	"""
-	Merge the counts of nb of HP by GS recorded in the EAMENA database (first argument) and the list of GS having 0 HP (second argument). The latter is calculated with the function gs_with_0_hp()
+	Merge the counts of nb of HP by GS recorded in the EAMENA database (first argument) and the list of GS having 0 HP (second argument). The former is calculated with the eamenaR function ref_hps(), the latter is calculated with the function gs_with_0_hp()
 
 	:param nb_hp_gs: A GeoJSON file
 	:param verbose: A CSV
@@ -303,8 +303,8 @@ def hp_by_gs_nb(nb_hp_gs='C:/Users/Thomas Huet/Desktop/temp/nb_hp_by_grids.geojs
 	return updated_geo_df
 	# Save the updated GeoDataFrame as GeoJSON
 
-hp_by_gs_nb(nb_hp_gs='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/gs_with_0_hp.csv',  verbose=True)
-
+updated_geo_df = hp_by_gs_nb(nb_hp_gs='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/nb_hp_by_grids.geojson', gs_with_0_hp='C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/gs_with_0_hp.csv',  verbose=True)
+updated_geo_df.to_file('C:/Rprojects/eamena-data/working_data/hp_by_gs_nb/year_2024/nb_hp_by_grids_including_0_hp.geojson', driver='GeoJSON')
 #%%
 
 def gs_merge_info(geometries = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/EAMENA_Grid.geojson", uuids = "https://raw.githubusercontent.com/eamena-project/eamena-arches-dev/main/data/grids/data-1688403740400-1.csv"):
