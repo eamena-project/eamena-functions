@@ -55,7 +55,7 @@ def filter_business_data(input_file_path = "C:/Rprojects/eamena-arches-dev/dbs/d
 			print("  done")
 	if 'Information Resource Used' in df_filtered_r2r.columns:
 		if verbose:
-				 print("  - 'Information Resource Used'")
+			print("  - 'Information Resource Used'")
 		# rm empty row
 		df_filtered_r2r_ir = df_filtered_r2r.dropna(subset=['Information Resource Used'])
 		df_map_r2r_ir = pd.read_csv(r2r_map_ir)
